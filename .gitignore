@@ -1,0 +1,32 @@
+# ── Environment ───────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Credentials / Secrets ─────────────────────────────────────
+tokens.json
+client_secret.json
+*.pem
+*.key
+
+# ── Node ──────────────────────────────────────────────────────
+node_modules/
+2-karyawan-cs/auth_info_baileys/
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# ── Output Artifacts ──────────────────────────────────────────
+1-mesin-konten/tts_output.mp3
+1-mesin-konten/bg_video.mp4
+1-mesin-konten/output_ready.mp4
+
+# ── Misc ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log

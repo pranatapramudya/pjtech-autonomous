@@ -1,0 +1,30 @@
+{
+  "name": "pjtech-autonomous",
+  "version": "1.0.0",
+  "description": "Autonomous Solopreneur Ecosystem for PJTech Kasir UMKM",
+  "main": "orchestrator.js",
+  "scripts": {
+    "start": "node orchestrator.js",
+    "cs-bot": "node 2-karyawan-cs/bot_cs.js",
+    "content": "node 1-mesin-konten/agent_video.js",
+    "dev": "node orchestrator.js",
+    "bot": "npm --prefix video-engine run start:bot",
+    "start:bot": "npm --prefix video-engine run start:bot",
+    "generate:motion": "npm --prefix video-engine run generate:motion",
+    "generate:e2e": "npm --prefix video-engine run generate:e2e"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@whiskeysockets/baileys": "^6.7.9",
+    "chalk": "^5.4.1",
+    "concurrently": "^9.1.2",
+    "dotenv": "^17.4.2",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "PJTech",
+  "license": "MIT"
+}
