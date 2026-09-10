@@ -52,30 +52,52 @@ D:/Coding/
 
 ---
 
-## 🎛️ 2. Master Telegram Cockpit (`PJTECH Mandor Bot`)
+## 🎛️ 2. Master Telegram Cockpit (`PJTECH Executive Suite`)
 
 Seluruh operasi bisnis dikendalikan secara nirkabel dari smartphone melalui Telegram. Tidak perlu membuka terminal atau menyentuh kodingan:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        4 DIVISI KENDALI TELEGRAM COCKPIT                               │
+│                        6 PILAR KENDALI TELEGRAM EXECUTIVE SUITE                        │
 ├───────────────────────────┬────────────────────────────┬───────────────────────────────┤
-│ 🎬 1. DIVISI MARKETING    │  💼 2. DIVISI SALES        │  💰 3. DIVISI AFFILIATE       │
+│ 👔 1. AI CEO & TECH RADAR │ 🎬 2. DIVISI MARKETING     │ 💼 3. DIVISI SALES            │
 ├───────────────────────────┼────────────────────────────┼───────────────────────────────┤
-│ • Render E2E App Demo     │ • Scrape Google Maps       │ • Input Link / Video Mentah   │
-│ • Render 2D Motion Story  │ • 1-Klik Kampanye Harian   │ • AI Viral Hook Detection     │
-│ • Auto-Upload YouTube     │ • Batch Outreach WA (5)    │ • Subtitle Animasi Karaoke    │
-│ • Kirim MP4 ke Chat HP    │ • Pairing WA Aman (QR)     │ • Auto Layout Fashion/Kosmetik│
-│ • Copywriting Siap Pakai  │ • Notifikasi Hot Leads     │ • Kirim Klip Siap Upload      │
-├───────────────────────────┴────────────────────────────┴───────────────────────────────┤
-│                          📊 4. INFRASTRUKTUR & SERVER STATUS                           │
-│ • Status Server Kasir (Port 3000) • Status Cron 24/7 • Telemetri Database Prospek     │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+│ • Konsultasi AI CEO / RCA │ • Render E2E App Demo      │ • Scrape Google Maps          │
+│ • Sliding Window Memory   │ • Render 2D Motion Story   │ • 1-Klik Kampanye Harian      │
+│ • Live News Tech Radar    │ • Auto-Upload YouTube      │ • Batch Outreach WA (5)       │
+│ • Peluang Monetisasi Bisnis│ • Kirim MP4 ke Chat HP    │ • Pairing WA Aman (QR)        │
+│ • Natural Lang Fallthrough│ • Copywriting Siap Pakai   │ • Notifikasi Hot Leads        │
+├───────────────────────────┼────────────────────────────┼───────────────────────────────┤
+│ ✂️ 4. DIVISI KLIPER       │ 🤝 5. CS & FINANCE         │ 📊 6. SISTEM & SRE WATCHDOG   │
+├───────────────────────────┼────────────────────────────┼───────────────────────────────┤
+│ • Input Link / Video Mentah│ • Tiket Eskalasi Support  │ • Status Server Kasir (3000)  │
+│ • AI Viral Hook Detection │ • Monitoring Mayar.id      │ • Telemetri Database Prospek  │
+│ • Subtitle Animasi Pop-up │ • SLA Respon 5 Menit       │ • Self-Healing SRE Watchdog   │
+│ • Layout Fashion/Kosmetik │ • Resolusi Tiket 1-Klik    │ • Laporan Malam Eksekutif     │
+└───────────────────────────┴────────────────────────────┴───────────────────────────────┘
 ```
 
 ---
 
-## 💼 3. Divisi Sales: One Sales Man (B2B Auto-Pilot)
+## 👔 3. Autonomous Executive Board (AI CEO & Chief of Staff)
+
+Ekosistem PJTech dilengkapi dewan eksekutif berbasis AI yang bertindak sebagai Chief of Staff pribadi Mas Pranata:
+* **Konsultasi & Penanganan Masalah Tingkat Tinggi**: Menerima curhat operasional, keluhan bisnis, atau instruksi strategis, lalu menghasilkan *Root Cause Analysis (RCA)* cepat dan rencana tindakan teknis yang ringkas dan terarah.
+* **Zero-Token-Waste Sliding Window Memory**: Menggunakan buffer memori geser (*sliding window*) yang hanya mempertahankan **5 interaksi percakapan terakhir** (maksimal 10 pesan) yang dikirimkan ke model LLM Gemini. Riwayat lama otomatis dipangkas di RAM sehingga konsumsi token tetap minimal dan stabil.
+* **Natural Language Fallthrough Routing**: Setiap pesan teks bebas non-perintah di Telegram (misalnya *"CEO nya mana?"*, *"Penjualan minggu ini turun, solusinya apa?"*) otomatis dialihkan ke AI CEO tanpa perlu mengetikkan slash command.
+
+---
+
+## 📡 4. Realtime Tech Radar (Ultra Token-Efficient Live Feed)
+
+Memantau perkembangan teknologi terkini 24/7 tanpa pemborosan komputasi atau token:
+* **Open Source Live Feed Ingest**: Menarik 3–5 headline berita teknologi dan AI terhangat langsung dari endpoint publik Hacker News Firebase API secara *zero-cost* dan tanpa browser scraping yang berat.
+* **Gemini Flash Sharp Synthesis**: Hanya judul berita yang dikirimkan ke model **Gemini Flash** dengan prompt ultra-padat (<150 token) untuk merangkum 3 tren utama dalam bahasa Indonesia, berfokus pada inovasi teknologi dan peluang monetisasi bisnis UMKM.
+* **Akses Instan Telegram**: Dapat diakses kapan saja melalui tombol `📡 Tech Radar (AI News Terkini)` di menu utama atau command `/techradar`.
+
+---
+
+## 💼 5. Divisi Sales: One Sales Man (B2B Auto-Pilot)
 
 Divisi Sales dirancang untuk melakukan jemput bola calon klien B2B secara terukur dan aman dari risiko pemblokiran nomor WhatsApp:
 
@@ -99,7 +121,7 @@ Divisi Sales dirancang untuk melakukan jemput bola calon klien B2B secara teruku
 
 ---
 
-## 🎬 4. Divisi Marketing: Pabrik Konten & Multi-Platform Delivery
+## 🎬 6. Divisi Marketing: Pabrik Konten & Multi-Platform Delivery
 
 Memproduksi video berstandar agensi periklanan untuk mengonversi prospek di berbagai kanal sosial media:
 
@@ -126,7 +148,7 @@ Memproduksi video berstandar agensi periklanan untuk mengonversi prospek di berb
 
 ---
 
-## 💰 5. Divisi Affiliate: Kliper Autonomous Engine
+## 💰 7. Divisi Affiliate: Kliper Autonomous Engine
 
 Dirancang khusus untuk kakak Mas Pranata agar bisa memproduksi klip video affiliasi TikTok/Shopee tanpa perlu memahami koding atau software editing:
 
@@ -151,7 +173,19 @@ Dirancang khusus untuk kakak Mas Pranata agar bisa memproduksi klip video affili
 
 ---
 
-## ⚙️ 6. Infrastruktur & Automasi 24/7
+## 🛡️ 8. Self-Healing SRE Watchdog
+
+Untuk menjamin keandalan sistem autonomous yang beroperasi 24/7 tanpa pengawasan manual, disematkan arsitektur **Self-Healing SRE Watchdog** (`video-engine/src/pipeline/watchdog.ts`):
+* **Resilient Task Wrapper (`withWatchdog`)**: Membungkus tugas-tugas kritis berisiko tinggi (Remotion video rendering, Playwright browser scraping, dan koneksi WhatsApp socket).
+* **Token-Efficient Diagnostic Capture**: Ketika terjadi kegagalan atau exception, sistem memotong dan mengambil hanya **50 baris terakhir** dari log stderr/stdout.
+* **Instant Gemini Flash RCA & Adaptive 1x Retry**: Log 50 baris tersebut dianalisis oleh Gemini Flash untuk mengidentifikasi akar masalah (OOM, timeout jaringan, file lock, bentrok port) dan memberikan saran perbaikan. Sistem kemudian mencoba 1 kali *retry* adaptif (maksimal 1x retry guna mencegah *infinite loop* pemborosan token).
+* **Notifikasi SRE ke Telegram**:
+  - `[AUTO-HEALED ✅]`: Dikirim jika percobaan kedua berhasil pulih secara otomatis.
+  - `[ESCALATION NEEDED 🚨]`: Dikirim bersama ringkasan diagnosa RCA jika butuh penanganan fisik oleh teknisi.
+
+---
+
+## ⚙️ 9. Infrastruktur & Automasi 24/7
 
 ### Jadwal Cron Job Otomatis (`Asia/Jakarta`)
 Sistem autonomous scheduler bekerja setiap hari tanpa henti mengikuti matriks jadwal berikut:
@@ -186,7 +220,7 @@ File script otomatisasi telah tersedia di root proyek: [setup-windows.ps1](setup
 
 ---
 
-## ⏰ 7. Panduan Hardware: Auto Power-On PC via BIOS Motherboard
+## ⏰ 10. Panduan Hardware: Auto Power-On PC via BIOS Motherboard
 
 Karena sistem operasi tidak dapat menyalakan PC dari kondisi mati total (*Cold Shutdown*), kita memanfaatkan fitur perangkat keras bawaan motherboard yaitu **RTC Alarm (Real-Time Clock Power-On)**. 
 
@@ -244,7 +278,7 @@ Dengan menyetel fitur ini, PC Mas Pranata akan **menyala secara otomatis setiap 
 
 ---
 
-## 🚀 8. Panduan Menjalankan Sistem
+## 🚀 11. Panduan Menjalankan Sistem
 
 ### Sekali Setup (Sudah Dijalankan)
 Jalankan script konfigurasi Windows satu kali via PowerShell:
