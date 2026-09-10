@@ -9,21 +9,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - **Autonomous Executive Board (AI CEO & Chief of Staff)**:
   - Integrated AI Chief of Staff persona into Telegram Command Center for high-level business strategy, operational complaint analysis, and technical action plans.
-  - Zero-Token-Waste Sliding Window Memory: keeps LLM token consumption predictable and lean by retaining only the last 5 conversational turns (max 10 messages).
-  - Natural language fallthrough routing in Telegram: automatically detects conversational text and routes it to AI CEO.
-- **Realtime Tech Radar (Ultra Token-Efficient)**:
-  - Real-time ingestion of top 3-5 tech/AI headlines from the public Hacker News Firebase API without heavy browser scraping overhead.
-  - High-density Gemini Flash summarization (<150 tokens) focusing on innovation and practical monetization opportunities.
+  - Zero-Token-Waste Sliding Window Memory: keeps LLM token consumption predictable and lean by retaining only the last **5 conversational turns** (max 10 messages) sent to the LLM; older history is pruned in-memory.
+  - Natural language fallthrough routing in Telegram: automatically detects conversational text and routes it to AI CEO without requiring slash commands.
+- **Realtime Tech Radar (`/techradar`)**:
+  - Real-time ingestion of top 3–5 tech/AI headlines from the public Hacker News Firebase API (zero-cost, no browser scraping).
+  - High-density Gemini Flash summarization (<150 tokens prompt) focusing on innovation trends and practical monetization opportunities for UMKM.
   - Interactive `/techradar` command and inline keyboard button in Telegram cockpit.
 - **Self-Healing SRE Watchdog**:
   - Resilient task wrapper (`withWatchdog`) in `video-engine/src/pipeline/watchdog.ts` protecting critical pipelines (Remotion render, Playwright scraper, WhatsApp outreach).
-  - Token-efficient diagnostic logging: extracts only the last 50 lines of stderr upon failure.
-  - Automatic Gemini Flash RCA diagnosis and 1x adaptive retry with Telegram alerting (`[AUTO-HEALED ✅]` / `[ESCALATION NEEDED 🚨]`).
+  - Token-efficient diagnostic logging: extracts only the last **50 lines** of stderr upon failure (tail-50 truncation) before sending to Gemini for RCA.
+  - Automatic Gemini Flash RCA diagnosis and **1x adaptive retry** with Telegram alerting (`[AUTO-HEALED ✅]` / `[ESCALATION NEEDED 🚨]`).
+- **Resilient Polling Guard (Anti 409 Conflict)**:
+  - Replaced aggressive 3s-fixed reconnect loop with **exponential backoff** strategy: 3s → 6s → 12s → 24s → 48s (max 60s cap).
+  - Added **max 5 attempts** gate — after exhausting retries, guard silences itself and lets the event loop stabilize without spamming the log.
+  - Guard now calls `bot.stopPolling()` explicitly before `startPolling({ restart: true })` to ensure clean connection teardown.
+  - Network noise errors (`ETIMEOUT`, `ECONNRESET`) are filtered from the warning log to reduce noise.
+- **Crash-Proof Global Process Safety Handlers**:
+  - `uncaughtException` handler: logs full error + stack trace but **no longer calls `process.exit(1)`** — bot stays alive and recovers without manual restart.
+  - `unhandledRejection` handler: logs rejected promise reference and reason without exiting, keeping the event loop alive.
 
-### Fixed & Improved
-- **14-Day Free Trial Outreach**: Updated Kasir UMKM cold outreach message templates to offer a 14-day free trial (upgraded from 7 days) to maximize conversion.
-- **WhatsApp Anti-Ban Protections**: Locked outreach scheduler to 14:00 WIB with max 5-prospect batches and random 30-60s humanized jitter delays.
-- **Telegram Executive Suite UI**: Restructured main menu keyboard with AI CEO and Tech Radar as top priority rows, with updated `/start` welcome header.
+### Improved
+- **WhatsApp Outreach Queue**: Strict **5-prospect batch** limit per scheduled run with **30–60 second randomized anti-ban jitter** delay between messages (upgraded from 10–25s). Outreach copy updated to promote **Free Trial 14 Hari** (upgraded from 7 days) to maximize open rate and conversion.
+- **Autonomous Scheduler Daily Matrix**: Added **08:00 WIB BIOS RTC Auto-Wake** entry and **21:35 WIB Safe Auto-Shutdown** entry to the cron schedule, completing the full power cycle loop.
+- **README.md**: Updated architecture docs to reflect all v1.2.0 features including Polling Guard section, updated cron schedule table, and revised WhatsApp outreach specifications.
 
 ## [1.1.0] - 2026-09-10
 

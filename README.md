@@ -108,8 +108,8 @@ Divisi Sales dirancang untuk melakukan jemput bola calon klien B2B secara teruku
    - Prospek disimpan secara terpusat dengan Prisma ORM.
    - Dilengkapi deduplikasi otomatis agar satu nomor tidak pernah dihubungi lebih dari sekali.
 3. **Outreach WhatsApp Humanis & Anti-Ban**:
-   - Mengirim sapaan awal riset yang sopan per batch (5 kontak).
-   - Jeda acak (random jitter 10–25 detik) antar pesan untuk meniru kebiasaan mengetik manusia.
+   - Mengirim pesan pembuka *Free Trial 14 Hari* yang ramah per batch (strict **5 kontak/sesi**).
+   - Jeda acak (*random jitter* **30–60 detik**) antar pesan untuk meniru ritme mengetik manusia dan menghindari deteksi bot WhatsApp.
 4. **AI Negotiator (Groq Llama 3 70B)**:
    - Merespons balasan pesan prospek secara otomatis dan kontekstual.
    - Mampu mendiagnosa masalah bisnis prospek dan menawarkan:
@@ -177,7 +177,7 @@ Dirancang khusus untuk kakak Mas Pranata agar bisa memproduksi klip video affili
 
 Untuk menjamin keandalan sistem autonomous yang beroperasi 24/7 tanpa pengawasan manual, disematkan arsitektur **Self-Healing SRE Watchdog** (`video-engine/src/pipeline/watchdog.ts`):
 * **Resilient Task Wrapper (`withWatchdog`)**: Membungkus tugas-tugas kritis berisiko tinggi (Remotion video rendering, Playwright browser scraping, dan koneksi WhatsApp socket).
-* **Token-Efficient Diagnostic Capture**: Ketika terjadi kegagalan atau exception, sistem memotong dan mengambil hanya **50 baris terakhir** dari log stderr/stdout.
+* **Token-Efficient Diagnostic Capture**: Ketika terjadi kegagalan atau exception, sistem memotong dan mengambil hanya **50 baris terakhir** dari log stderr/stdout (tail-50) untuk meminimalkan token yang dikonsumsi LLM.
 * **Instant Gemini Flash RCA & Adaptive 1x Retry**: Log 50 baris tersebut dianalisis oleh Gemini Flash untuk mengidentifikasi akar masalah (OOM, timeout jaringan, file lock, bentrok port) dan memberikan saran perbaikan. Sistem kemudian mencoba 1 kali *retry* adaptif (maksimal 1x retry guna mencegah *infinite loop* pemborosan token).
 * **Notifikasi SRE ke Telegram**:
   - `[AUTO-HEALED ✅]`: Dikirim jika percobaan kedua berhasil pulih secara otomatis.
@@ -185,19 +185,35 @@ Untuk menjamin keandalan sistem autonomous yang beroperasi 24/7 tanpa pengawasan
 
 ---
 
-## ⚙️ 9. Infrastruktur & Automasi 24/7
+## ⚡ 9. Resilient Polling Guard (Anti 409 Conflict)
+
+Bot Telegram `node-telegram-bot-api` menggunakan model *long-polling* yang rentan terhadap konflik **409 Conflict** apabila lebih dari satu instansi node.js memegang token polling secara bersamaan. Arsitektur guard berikut memastikan bot selalu pulih secara mandiri:
+
+* **Exponential Backoff (3s → 6s → 12s → 24s → 48s)**: Setiap attempt reconnect menggandakan interval tunggu, memberi ruang bagi instansi lama untuk mati dan melepaskan polling slot sebelum instansi baru merebut slot tersebut.
+* **Max 5 Attempts Cap**: Setelah 5 percobaan gagal, guard berhenti mencoba (tidak spam loop) dan menunggu kondisi stabil. Polling akan pulih sendiri ketika instansi lain benar-benar mati.
+* **Stop-before-Restart**: Guard memanggil `bot.stopPolling()` secara eksplisit sebelum `startPolling({ restart: true })` untuk memastikan koneksi lama benar-benar diputus terlebih dahulu.
+* **Crash-Proof Global Process Handlers**:
+  - `uncaughtException` → log error detail **tanpa** `process.exit(1)` sehingga bot tidak mati permanen.
+  - `unhandledRejection` → log promise + reason **tanpa** exit, menjaga event loop tetap hidup.
+* **Single-Instance Guard di `bot.ps1`**: Sebelum memulai bot, launcher memeriksa semua proses `node.exe` yang mengandung `telegram.ts` dalam CommandLine-nya dan mematikan duplikat dengan `Stop-Process -Force`.
+
+---
+
+## ⚙️ 10. Infrastruktur & Automasi 24/7
 
 ### Jadwal Cron Job Otomatis (`Asia/Jakarta`)
 Sistem autonomous scheduler bekerja setiap hari tanpa henti mengikuti matriks jadwal berikut:
 
 | Jam (WIB) | Divisi | Nama Operasi | Keterangan |
 | :---: | :---: | :--- | :--- |
+| **08:00** | 🖥️ System | **BIOS RTC Auto-Wake & Startup Check** | PC menyala otomatis via BIOS RTC Alarm. Windows auto-logon, `bot.ps1` dijalankan dari folder Startup: kill zombie proses lama → cek koneksi Telegram API → aktifkan bot → notifikasi online. |
 | **08:30** | 💼 Sales | **Auto-Scrape Google Maps** | Mengumpulkan 10 prospek baru sesuai matriks sektor harian (Senin: Retail, Selasa: Kafe, Rabu: Gym/Salon, Kamis: Rental, Jumat: Kuliner, Sabtu: Bengkel). |
 | **12:00** | 🎬 Marketing | **Slot 1: E2E App Demo** | Render video demo aplikasi ➔ Upload YouTube Shorts ➔ Kirim MP4 & copywriting ke Telegram. |
-| **14:00** | 💼 Sales | **Batch Outreach WA (Anti-Ban)** | Menyapa 5 prospek berstatus `PENDING` dengan pesan ramah dan jeda acak manusiawi. |
+| **14:00** | 💼 Sales | **Batch Outreach WA (Anti-Ban)** | Menyapa **5 prospek** berstatus `PENDING` dengan pesan *Free Trial 14 Hari* dan jeda acak **30–60 detik** antar pesan untuk menghindari deteksi WhatsApp. |
 | **18:30** | 🎬 Marketing | **Slot 2: 2D Motion Story** | Render video 2D motion explainer ➔ Upload YouTube Shorts ➔ Kirim MP4 & copywriting ke Telegram. |
 | **21:00** | 🧠 Analytics | **AI Analytics Flywheel** | Gemini AI menganalisis performa YouTube harian dan merumuskan *winning hook formula* baru ke knowledge base. |
-| **21:30** | 📋 Executive | **Nightly Executive Briefing** | Bot mengirimkan laporan ringkasan malam ke Telegram (jumlah prospek, status pipeline, dan video yang terbit). |
+| **21:30** | 📋 Executive | **Nightly Executive Briefing** | Bot mengirimkan laporan ringkasan malam ke Telegram (jumlah prospek, status pipeline, dan video yang terbit hari ini). |
+| **21:35** | 🖥️ System | **Safe Auto-Shutdown OS** | Menjalankan `shutdown /s /t 60` untuk mematikan PC dengan aman setelah semua laporan terkirim — siap untuk siklus RTC berikutnya. |
 
 ### Windows 24/7 Power Plan, Auto-Start & Auto-Logon
 File script otomatisasi telah tersedia di root proyek: [setup-windows.ps1](setup-windows.ps1) dan [bot.ps1](bot.ps1).
@@ -220,7 +236,7 @@ File script otomatisasi telah tersedia di root proyek: [setup-windows.ps1](setup
 
 ---
 
-## ⏰ 10. Panduan Hardware: Auto Power-On PC via BIOS Motherboard
+## ⏰ 11. Panduan Hardware: Auto Power-On PC via BIOS Motherboard
 
 Karena sistem operasi tidak dapat menyalakan PC dari kondisi mati total (*Cold Shutdown*), kita memanfaatkan fitur perangkat keras bawaan motherboard yaitu **RTC Alarm (Real-Time Clock Power-On)**. 
 
@@ -278,7 +294,7 @@ Dengan menyetel fitur ini, PC Mas Pranata akan **menyala secara otomatis setiap 
 
 ---
 
-## 🚀 11. Panduan Menjalankan Sistem
+## 🚀 12. Panduan Menjalankan Sistem
 
 ### Sekali Setup (Sudah Dijalankan)
 Jalankan script konfigurasi Windows satu kali via PowerShell:
