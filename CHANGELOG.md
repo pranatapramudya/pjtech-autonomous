@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1] - 2026-09-10
+
+### Added
+- **Decoupled Telegram Bot as Independent Windows Background Daemon**:
+  - Detached VBScript launcher (`scripts/start-telegram-daemon.vbs`) running with `WindowStyle = 0` (silent/hidden, no terminal popup).
+  - Cross-process lifecycle utility (`scripts/manage-bot.ps1`) supporting `-Action start`, `stop`, and `status`.
+  - True OS-level process isolation via WMI `Win32_Process.Create` decoupling the daemon from IDE / shell process trees.
+  - Dedicated background execution logging routed to `telegram-daemon.log` with `.gitignore` protection.
+
 ## [1.2.0] - 2026-09-10
 
 ### Added

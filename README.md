@@ -310,11 +310,25 @@ Jika Anda ingin menyalakan bot command center secara manual di terminal:
 npm run bot
 ```
 
+### Daemon Management (Independent Windows Background Service)
+Bot Telegram dan Autonomous Scheduler dapat dijalankan secara terpisah (*detached background daemon*) dari process tree Antigravity IDE atau konsol terminal:
+
+```powershell
+# Menyalakan daemon di background (terpisah dari process tree Antigravity / console):
+.\scripts\manage-bot.ps1 -Action start
+
+# Memeriksa status proses yang sedang aktif & melihat 15 baris log terakhir:
+.\scripts\manage-bot.ps1 -Action status
+
+# Menghentikan daemon bot:
+.\scripts\manage-bot.ps1 -Action stop
+```
+
 ### Memeriksa Status Log Background
 Jika sistem sedang berjalan di background, seluruh aktivitas tercatat pada log:
 ```powershell
-# Cek aktivitas Telegram Bot & Scheduler
-Get-Content -Path "C:\Users\<User>\.gemini\antigravity-ide\brain\...\task-xxx.log" -Tail 50 -Wait
+# Cek aktivitas Telegram Bot & Scheduler (Daemon Log)
+Get-Content -Path "D:\Coding\pjtech-autonomous\telegram-daemon.log" -Tail 50 -Wait
 ```
 
 ---
