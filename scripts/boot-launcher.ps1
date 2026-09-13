@@ -24,6 +24,7 @@ Log-Boot "==========================================================="
 
 # 1. Pastikan Environment Variable Puppeteer & User Profile terpasang
 $env:PUPPETEER_CACHE_DIR = "C:\Users\Pranata Pramudya\.cache\puppeteer"
+$env:PLAYWRIGHT_BROWSERS_PATH = "0"
 if (-not $env:USERPROFILE -or $env:USERPROFILE -like "*systemprofile*") {
     $env:USERPROFILE = "C:\Users\Pranata Pramudya"
 }
