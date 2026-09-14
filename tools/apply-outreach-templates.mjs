@@ -48,7 +48,7 @@ export function sanitizeBusinessName(rawName: string): string {
   return name || rawName;
 }
 
-// ── LAPISAN 2: FITUR SPESIFIK KATEGORI (4 TENANT TYPES) ──────────────────────
+// ── LAPISAN 2: FITUR SPESIFIK 4 PILAR BISNIS UMKM ────────────────────────────
 export function getCategoryFeature(category: string | null): string {
   const cat = (category || '').toLowerCase();
 
@@ -112,7 +112,7 @@ export function getCategoryFeature(category: string | null): string {
     return 'hitung komisi kapster/teknisi dan rekap omzet';
   }
 
-  // 4. Rental / Travel / Property
+  // 4. Rental / Travel / Properti (per jam/hari, kendaraan, penginapan pantai, kos, villa)
   if (
     cat.includes('rental') ||
     cat.includes('sewa') ||
@@ -127,9 +127,18 @@ export function getCategoryFeature(category: string | null): string {
     cat.includes('penginapan') ||
     cat.includes('homestay') ||
     cat.includes('villa') ||
-    cat.includes('hotel')
+    cat.includes('hotel') ||
+    cat.includes('pantai') ||
+    cat.includes('resort') ||
+    cat.includes('cottage') ||
+    cat.includes('glamping') ||
+    cat.includes('lapangan') ||
+    cat.includes('futsal') ||
+    cat.includes('badminton') ||
+    cat.includes('studio') ||
+    cat.includes('ruang')
   ) {
-    return 'catat jadwal sewa, deposit, dan tagihan';
+    return 'catat jadwal sewa unit/kamar per jam atau per hari, deposit, dan kuitansi otomatis';
   }
 
   // 5. Fallback Kategori Lainnya
@@ -140,20 +149,169 @@ export function getCategoryFeature(category: string | null): string {
 export function getNicheHook(category: string | null, cleanName: string): string {
   const feature = getCategoryFeature(category);
   return \`Halo admin \${cleanName}, salam kenal! Nemu kontak dari Google Maps.
-Mau menawarkan akses Coba Gratis 7 Hari aplikasi Kasir PJTech untuk bantu \${feature}.
+Mau menawarkan akses Coba Gratis 14 Hari aplikasi Kasir PJTech untuk bantu \${feature}.
 Langsung akses dan coba gratis di sini kak: https://pjtechumkm.com
 
-Oh ya, kalau misal butuh pembuatan sistem/aplikasi custom khusus untuk operasional bisnisnya, kami juga bisa bantu ya kak. 🙏\`;
+Oh ya, kalau misal butuh pembuatan sistem/website custom khusus untuk operasional bisnisnya, kami juga bisa bantu. Cek layanan kami di: https://pranajayatech.online 🙏\`;
+}
+
+// ── HELPER DELAY ANTI-BAN (30s - 60s) ────────────────────────────────────────
+function randomDelay(minMs: number = 30000, maxMs: number = 60000): Promise<number> {
+  const ms = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+  return new Promise((resolve) => setTimeout(() => resolve(ms), ms));
+}
+
+// ── HELPER SMART CATEGORY FILTER ─────────────────────────────────────────────
+export function buildCategoryQuery(category?: string): any {
+  if (!category || category.trim() === '') return undefined;
+  const cat = category.toLowerCase().trim();
+
+  // F&B Niche
+  if (
+    cat.includes('f&b') ||
+    cat.includes('fnb') ||
+    cat.includes('kafe') ||
+    cat.includes('cafe') ||
+    cat.includes('resto') ||
+    cat.includes('kopi') ||
+    cat.includes('makan') ||
+    cat.includes('kuliner') ||
+    cat.includes('bakery')
+  ) {
+    return {
+      OR: [
+        { category: { contains: 'kafe', mode: 'insensitive' } },
+        { category: { contains: 'cafe', mode: 'insensitive' } },
+        { category: { contains: 'resto', mode: 'insensitive' } },
+        { category: { contains: 'kopi', mode: 'insensitive' } },
+        { category: { contains: 'makan', mode: 'insensitive' } },
+        { category: { contains: 'f&b', mode: 'insensitive' } },
+        { category: { contains: 'fnb', mode: 'insensitive' } },
+        { category: { contains: 'kuliner', mode: 'insensitive' } },
+        { category: { contains: 'bakery', mode: 'insensitive' } },
+        { category: { contains: 'kedai', mode: 'insensitive' } }
+      ]
+    };
+  }
+
+  // Rental / Properti Niche
+  if (
+    cat.includes('rental') ||
+    cat.includes('sewa') ||
+    cat.includes('kos') ||
+    cat.includes('kost') ||
+    cat.includes('mobil') ||
+    cat.includes('motor') ||
+    cat.includes('villa') ||
+    cat.includes('homestay') ||
+    cat.includes('pantai') ||
+    cat.includes('properti') ||
+    cat.includes('penginapan') ||
+    cat.includes('hotel') ||
+    cat.includes('resort') ||
+    cat.includes('lapangan')
+  ) {
+    return {
+      OR: [
+        { category: { contains: 'rental', mode: 'insensitive' } },
+        { category: { contains: 'sewa', mode: 'insensitive' } },
+        { category: { contains: 'mobil', mode: 'insensitive' } },
+        { category: { contains: 'motor', mode: 'insensitive' } },
+        { category: { contains: 'kos', mode: 'insensitive' } },
+        { category: { contains: 'villa', mode: 'insensitive' } },
+        { category: { contains: 'homestay', mode: 'insensitive' } },
+        { category: { contains: 'penginapan', mode: 'insensitive' } },
+        { category: { contains: 'travel', mode: 'insensitive' } },
+        { category: { contains: 'properti', mode: 'insensitive' } },
+        { category: { contains: 'resort', mode: 'insensitive' } },
+        { category: { contains: 'hotel', mode: 'insensitive' } },
+        { category: { contains: 'lapangan', mode: 'insensitive' } }
+      ]
+    };
+  }
+
+  // Retail Niche
+  if (
+    cat.includes('retail') ||
+    cat.includes('toko') ||
+    cat.includes('mart') ||
+    cat.includes('minimarket') ||
+    cat.includes('sembako') ||
+    cat.includes('grosir') ||
+    cat.includes('warung') ||
+    cat.includes('butik') ||
+    cat.includes('distro') ||
+    cat.includes('fashion')
+  ) {
+    return {
+      OR: [
+        { category: { contains: 'retail', mode: 'insensitive' } },
+        { category: { contains: 'toko', mode: 'insensitive' } },
+        { category: { contains: 'mart', mode: 'insensitive' } },
+        { category: { contains: 'minimarket', mode: 'insensitive' } },
+        { category: { contains: 'sembako', mode: 'insensitive' } },
+        { category: { contains: 'grosir', mode: 'insensitive' } },
+        { category: { contains: 'warung', mode: 'insensitive' } },
+        { category: { contains: 'butik', mode: 'insensitive' } },
+        { category: { contains: 'distro', mode: 'insensitive' } },
+        { category: { contains: 'baju', mode: 'insensitive' } },
+        { category: { contains: 'elektronik', mode: 'insensitive' } }
+      ]
+    };
+  }
+
+  // Jasa Niche
+  if (
+    cat.includes('jasa') ||
+    cat.includes('servis') ||
+    cat.includes('service') ||
+    cat.includes('salon') ||
+    cat.includes('barber') ||
+    cat.includes('cukur') ||
+    cat.includes('bengkel') ||
+    cat.includes('klinik') ||
+    cat.includes('dokter') ||
+    cat.includes('apotek') ||
+    cat.includes('laundry') ||
+    cat.includes('cuci') ||
+    cat.includes('gym')
+  ) {
+    return {
+      OR: [
+        { category: { contains: 'jasa', mode: 'insensitive' } },
+        { category: { contains: 'servis', mode: 'insensitive' } },
+        { category: { contains: 'salon', mode: 'insensitive' } },
+        { category: { contains: 'barber', mode: 'insensitive' } },
+        { category: { contains: 'cukur', mode: 'insensitive' } },
+        { category: { contains: 'bengkel', mode: 'insensitive' } },
+        { category: { contains: 'klinik', mode: 'insensitive' } },
+        { category: { contains: 'dokter', mode: 'insensitive' } },
+        { category: { contains: 'apotek', mode: 'insensitive' } },
+        { category: { contains: 'spa', mode: 'insensitive' } },
+        { category: { contains: 'laundry', mode: 'insensitive' } },
+        { category: { contains: 'cuci', mode: 'insensitive' } },
+        { category: { contains: 'gym', mode: 'insensitive' } }
+      ]
+    };
+  }
+
+  return { category: { contains: cat, mode: 'insensitive' } };
 }
 
 // ── FUNGSI UTAMA BATCH OUTREACH ──────────────────────────────────────────────
-async function runBatchOutreach(batchLimit: number = 5, category?: string, city?: string) {
+async function runBatchOutreach(batchLimit: number = 10, category?: string, city?: string) {
   console.log(\`[OUTREACH_START] Memulai batch outreach (Maksimal: \${batchLimit} prospek PENDING | Filter: \${category || 'Semua'} - \${city || 'Semua'})...\`);
 
   const whereClause: any = { status: 'PENDING' };
-  if (category && category.trim() !== '') {
-    whereClause.category = { contains: category.trim(), mode: 'insensitive' };
+  const catFilter = buildCategoryQuery(category);
+  if (catFilter) {
+    if (catFilter.OR) {
+      whereClause.OR = catFilter.OR;
+    } else if (catFilter.category) {
+      whereClause.category = catFilter.category;
+    }
   }
+
   if (city && city.trim() !== '') {
     whereClause.city = { contains: city.trim(), mode: 'insensitive' };
   }
@@ -181,8 +339,9 @@ async function runBatchOutreach(batchLimit: number = 5, category?: string, city?
   let successCount = 0;
   let failCount = 0;
 
-  for (let i = 0; i < pendingProspects.length; i++) {
-    const prospect = pendingProspects[i];
+  let currentIndex = 0;
+  for (const prospect of pendingProspects) {
+    currentIndex++;
 
     // 1. Lapisan 1: Bersihkan nama bisnis dari embel-embel Google Maps
     const cleanName = sanitizeBusinessName(prospect.businessName);
@@ -190,8 +349,8 @@ async function runBatchOutreach(batchLimit: number = 5, category?: string, city?
     // 2. Lapisan 2: Buat pesan baku dengan variasi fitur spesifik kategori
     const finalMessage = getNicheHook(prospect.category, cleanName);
 
-    console.log(\`[OUTREACH_TEXT \${i + 1}/\${pendingProspects.length}]:\\n"\${finalMessage}"\\n\`);
-    console.log(\`[OUTREACH_SENDING \${i + 1}/\${pendingProspects.length}] Mengirim pesan ke \${cleanName} (\${prospect.whatsappNumber})...\`);
+    console.log(\`[OUTREACH_TEXT \${currentIndex}/\${pendingProspects.length}]:\\n"\${finalMessage}"\\n\`);
+    console.log(\`[OUTREACH_SENDING \${currentIndex}/\${pendingProspects.length}] Mengirim pesan ke \${cleanName} (\${prospect.whatsappNumber})...\`);
 
     const success = await sendColdMessage(prospect.whatsappNumber, finalMessage);
 
@@ -212,6 +371,13 @@ async function runBatchOutreach(batchLimit: number = 5, category?: string, city?
         }
       });
       console.log(\`[OUTREACH_SUCCESS] \${cleanName} status diupdate ke CONTACTED.\`);
+
+      // Jeda acak 30s - 60s SETELAH setiap pengiriman pesan sukses sebelum lanjut ke prospek berikutnya
+      if (currentIndex < pendingProspects.length) {
+        console.log(\`⏳ [ANTI-BAN DELAY] Menunggu jeda aman sebelum kontak berikutnya...\`);
+        const waitedMs = await randomDelay(30000, 60000);
+        console.log(\`✅ [ANTI-BAN DELAY] Selesai jeda \${(waitedMs / 1000).toFixed(1)} detik. Melanjutkan ke prospek berikutnya...\\n\`);
+      }
     } else {
       failCount++;
       console.log(\`[OUTREACH_FAILED] Gagal mengirim pesan ke \${cleanName}.\`);
@@ -224,17 +390,17 @@ async function runBatchOutreach(batchLimit: number = 5, category?: string, city?
 
 async function main() {
   const args = process.argv.slice(2);
-  let batchLimit = 5;
+  let batchLimit = 10;
   let category: string | undefined;
   let city: string | undefined;
 
   for (const arg of args) {
     if (arg.startsWith('--batch=')) {
-      batchLimit = parseInt(arg.replace('--batch=', '').trim(), 10) || 5;
+      batchLimit = parseInt(arg.replace('--batch=', '').trim(), 10) || 10;
     } else if (arg.startsWith('--category=')) {
-      category = arg.replace('--category=', '').trim();
+      category = arg.replace('--category=', '').replace(/^["']|["']$/g, '').trim();
     } else if (arg.startsWith('--city=')) {
-      city = arg.replace('--city=', '').trim();
+      city = arg.replace('--city=', '').replace(/^["']|["']$/g, '').trim();
     }
   }
 
@@ -247,18 +413,20 @@ async function main() {
   whatsappClient.initialize();
 
   whatsappClient.on('ready', async () => {
-    console.log('[WA_READY] WhatsApp Client siap. Menjalankan smart batch outreach...');
+    console.log('[WA_READY] WhatsApp Client siap. Menunggu 5 detik untuk stabilisasi sesi multi-device...');
+    await new Promise((r) => setTimeout(r, 5000));
+    console.log('[WA_STABLE] Sesi stabil. Menjalankan smart batch outreach...');
     try {
       await runBatchOutreach(batchLimit, category, city);
     } catch (err) {
       console.error('[OUTREACH_ERROR]', err);
     } finally {
       setTimeout(async () => {
-        console.log('[WA_FINISH] Menutup koneksi...');
+        console.log('[WA_FINISH] Menutup koneksi secara aman...');
         await prisma.$disconnect();
         await whatsappClient.destroy().catch(() => {});
         process.exit(0);
-      }, 3000);
+      }, 5000);
     }
   });
 
@@ -272,7 +440,7 @@ async function main() {
 if (process.argv[1] && process.argv[1].includes('cli-outreach')) {
   main();
 }
-`;
+\`;
 
 fs.writeFileSync(targetFile, content, 'utf8');
-console.log('Successfully written updated cli-outreach.ts');
+console.log('Successfully written updated cli-outreach.ts to:', targetFile);

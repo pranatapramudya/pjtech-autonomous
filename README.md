@@ -333,5 +333,34 @@ Get-Content -Path "D:\Coding\pjtech-autonomous\telegram-daemon.log" -Tail 50 -Wa
 
 ---
 
+## 🛠️ 13. Catatan Rilis & Pembaruan Sistem Terkini (14 September 2026)
+
+Berikut rangkuman perbaikan dan kalibrasi sistem berskala menyeluruh yang baru saja diterapkan:
+
+### 1. Perbaikan Playwright Stealth & Scraper Google Maps
+- **Eliminasi Variabel Perusak:** Menghapus `PLAYWRIGHT_BROWSERS_PATH=0` dari file `.env`, `bot.ps1`, dan `scripts/start-telegram-daemon.vbs` yang sebelumnya menyebabkan Playwright mencari folder non-eksisten `./0/` dan mengakibatkan *crash* pada pipeline Jam 12:00 Siang (`E2E_APP_DEMO`) dan Scraper Pagi (`08:30 WIB`).
+- **Verifikasi Deteksi Browser:** Playwright sekarang secara resmi membaca direktori browser global Chromium di `%LOCALAPPDATA%\ms-playwright` (versi 151.0.7922.34), berhasil diuji langsung untuk *live-scraping* Google Maps.
+
+### 2. Sanitasi Shell Windows & Penanganan Karakter Khusus (`&`)
+- **Pencegahan Error Command Chaining:** Pada `sales-orchestrator.ts`, pemanggilan argumen CLI seperti `--keyword` dan `--category` kini dibungkus dengan tanda kutip aman (`"--keyword=..."`, `"--category=..."`), menyelesaikan isu di mana kata **`F&B`** memecah perintah di `cmd.exe` menjadi `F` dan memicu error `'B' is not recognized`.
+
+### 3. Sinkronisasi 4 Pilar Bisnis Kasir UMKM
+Menyelaraskan kategori di `one-sales-man/src/pipeline/cli-outreach.ts` dan `sales-orchestrator.ts` agar mencakup 4 pilar bisnis inti:
+1. **Retail** (*Minimarket, Toko, Sembako, Butik, Distro*): Hook pencatatan stok dan rekap penjualan harian.
+2. **F&B** (*Kafe, Resto, Kedai Kopi, Rumah Makan, Kuliner, Bakery*): Hook rekap order meja & cetak struk dapur.
+3. **Jasa / Servis** (*Barbershop, Salon, Bengkel, Klinik, Laundry, Gym*): Hook komisi teknisi/kapster & rekap omzet.
+4. **Rental / Travel / Properti** (*Rental Mobil/Motor, Homestay/Villa Pantai, Kos, Sewa Lapangan/Studio per jam atau per hari*): Hook jadwal sewa unit/kamar, deposit, dan kuitansi otomatis.
+- **Smart Category Query:** Database query tidak lagi mencari string kaku `F&B`, melainkan menggunakan filter multi-keyword OR (`kafe`, `resto`, `kopi`, `makan`, `kuliner`, `bakery`, dll).
+
+### 4. Resolusi Onboarding Kasir UMKM (Neon DB UPSERT & Playwright Fallback)
+- **Database UPSERT:** Mengubah query `UPDATE "Tenant"` pada `syncLocalTenantProfile` (`run_pipeline.ts`) menjadi query `UPSERT` (`INSERT ... ON CONFLICT ("userId") DO UPDATE ...`), memastikan akun pengujian bot (`user_3Itk4KPwZXw2jOkG93Ws92zkiKQ`) selalu memiliki profil Tenant berstatus `ACTIVE` di Neon DB baru.
+- **Camera Fallback:** Menambahkan penanganan otomatis di Playwright jika sewaktu-waktu teralihkan ke `/onboarding`, bot akan otomatis mengisi form usaha dan memilih kategori bisnis tanpa *stuck* di layar.
+
+### 5. Mandor Bot Fast-Path & Anti-Halusinasi AI CEO
+- Menambahkan listener teks cepat di Telegram Bot: mengetik `"gas wa"`, `"kirim wa"`, atau `"outreach"` langsung memicu `handleOutreachTrigger()`; mengetik `"scrape"` atau `"tambah prospek"` langsung menjalankan scraper Maps.
+- Menginjeksi *guardrail* ketat pada prompt AI CEO agar tidak berhalusinasi mengarang metrik atau status server yang tidak riil.
+
+---
+
 ## 🛡️ Lisensi & Kepemilikan
 Dikembangkan secara eksklusif untuk **Pranajaya Tech (PJTech Autonomous Solopreneur Ecosystem)**. Hak cipta dilindungi undang-undang.

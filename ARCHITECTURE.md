@@ -159,3 +159,18 @@ Kliper terintegrasi via [kliper-orchestrator.ts](file:///d:/Coding/pjtech-autono
 - **Pipeline**: Menjalankan `npx tsx run_pipeline.ts "<url>"` di dalam direktori `kliper-autonomous/video-engine`.
 - **Fitur /resend**: Mengambil langsung file-file `.mp4` dan `captions_all_clips.txt` yang sudah dirender di `public/output/` untuk dikirimkan kembali secara instan tanpa perlu re-download atau render ulang.
 - **Ekstraksi Hasil**: Menangkap klip vertikal HD 9:16 dari `public/output/` beserta file copywriting rekomendasi, lalu mengirimkannya langsung ke Telegram secara streaming.
+
+---
+
+## 🛡️ Lapisan Ketahanan Sistem (*System Resilience & Anti-Stall*)
+
+### 1. Zero-Crash Playwright Path Resolution
+Playwright menggunakan penyimpanan browser global di `%LOCALAPPDATA%\ms-playwright`. Variabel `PLAYWRIGHT_BROWSERS_PATH` dibersihkan dari environment untuk menghindari penunjukan ke path direktori yang keliru (`./0/`). Pemanggilan CLI di Windows (`cmd.exe`) selalu menggunakan sanitasi tanda kutip (`"--keyword=..."`) untuk mengisolasi karakter khusus seperti ampersand (`&`).
+
+### 2. Multi-Tenant Onboarding Bypass & DB Upsert
+Untuk menjamin video demo E2E (`run_pipeline.ts`) berjalan mulus tanpa terhenti di layar `/onboarding`:
+- **Neon DB Profile Sync**: Sinkronisasi tenant profile dieksekusi melalui pola PostgreSQL `UPSERT` (`INSERT ... ON CONFLICT ("userId") DO UPDATE ...`), memastikan ID akun uji coba bot selalu memiliki tenant aktif 365 hari.
+- **Dynamic Onboarding Handler**: Jika aplikasi kasir mengalihkan navigasi ke `/onboarding`, Playwright secara otomatis mendeteksi form, memasukkan nama toko demo, memilih kartu kategori yang sesuai (Retail / F&B / Jasa / Rental), dan melakukan submit otomatis.
+
+### 3. Smart Category Mapping & Funnel Outreach
+Sistem cold outreach memetakan 4 pilar bisnis secara cerdas (OR query multi-keyword) agar data hasil *scraping* Google Maps tidak terlewatkan dan pesan WhatsApp yang terkirim memiliki *hook* spesifik yang relevan dengan jenis usaha calon klien.
