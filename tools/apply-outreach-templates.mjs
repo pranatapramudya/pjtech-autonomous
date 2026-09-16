@@ -145,14 +145,64 @@ export function getCategoryFeature(category: string | null): string {
   return 'catat transaksi kasir dan rekap omzet harian';
 }
 
-// ── LAPISAN 3: STRUKTUR PESAN OUTREACH BAKU ──────────────────────────────────
+// ── LAPISAN 3: STRUKTUR PESAN OUTREACH SOFT-SELLING (4 PILAR BISNIS UMKM) ─────
 export function getNicheHook(category: string | null, cleanName: string): string {
-  const feature = getCategoryFeature(category);
-  return \`Halo admin \${cleanName}, salam kenal! Nemu kontak dari Google Maps.
-Mau menawarkan akses Coba Gratis 14 Hari aplikasi Kasir PJTech untuk bantu \${feature}.
-Langsung akses dan coba gratis di sini kak: https://pjtechumkm.com
+  const cat = (category || '').toLowerCase();
 
-Oh ya, kalau misal butuh pembuatan sistem/website custom khusus untuk operasional bisnisnya, kami juga bisa bantu. Cek layanan kami di: https://pranajayatech.online 🙏\`;
+  // 1. Pilar Rental, Travel & Properti
+  if (
+    cat.includes('rental') || cat.includes('sewa') || cat.includes('mobil') || cat.includes('motor') ||
+    cat.includes('travel') || cat.includes('tour') || cat.includes('kos') || cat.includes('kost') ||
+    cat.includes('homestay') || cat.includes('villa') || cat.includes('penginapan') || cat.includes('ps')
+  ) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk pencatatan jadwal booking armada/kamar, catat DP, dan cetak kuitansinya saat ini sudah pakai sistem otomatis atau masih rekap di buku/WA ya Kak?
+
+Kebetulan kami ada sistem kasir digital khusus usaha rental & penginapan (bisa dibuka fleksibel lewat HP, tablet, maupun laptop tanpa perlu beli alat mahal). Jadwal sewa rapi dan omzet harian kepantau langsung secara real-time.
+
+Akses uji coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan 2-3 data armada/unit awal Kakak secara gratis 😊 Boleh izin kirimkan contoh demonya, Kak?\`;
+  }
+
+  // 2. Pilar F&B (Kuliner, Kafe, Resto, Kedai, Minuman)
+  if (
+    cat.includes('kafe') || cat.includes('cafe') || cat.includes('kopi') || cat.includes('resto') ||
+    cat.includes('makan') || cat.includes('f&b') || cat.includes('fnb') || cat.includes('kuliner') ||
+    cat.includes('bakery') || cat.includes('roti') || cat.includes('kedai') || cat.includes('mie') ||
+    cat.includes('bakso') || cat.includes('boba') || cat.includes('teh')
+  ) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, pas jam ramai, untuk rekap orderan nomor meja kasir dan cetak struk pesanan ke dapur saat ini sudah pakai sistem kasir otomatis atau masih manual ya Kak?
+
+Kebetulan kami mengembangkan sistem kasir UMKM kuliner yang bisa jalan fleksibel di HP pelayan, tablet kasir, maupun laptop tanpa perlu mesin kasir jutaan rupiah. Rekap meja rapi dan omzet harian bisa dipantau langsung dari HP owner.
+
+Akses coba gratisnya bisa langsung dicek di https://pjtechumkm.com ya Kak. Kalau mau dibantu inputkan beberapa menu awal biar tinggal tes pakai, tim kami siap bantu inputkan gratis Kak 😊\`;
+  }
+
+  // 3. Pilar Jasa & Servis (Barber, Salon, Bengkel, Laundry, Servis Elektronik)
+  if (
+    cat.includes('jasa') || cat.includes('servis') || cat.includes('service') || cat.includes('salon') ||
+    cat.includes('barber') || cat.includes('bengkel') || cat.includes('laundry') || cat.includes('cuci') ||
+    cat.includes('klinik') || cat.includes('spa') || cat.includes('refleksi')
+  ) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk pembagian komisi bagi hasil capster/mekanik/karyawan dan cetak nota kasir saat ini sudah otomatis atau masih dihitung manual tiap tutup toko ya Kak?
+
+Kebetulan sistem kasir PJTech bisa dibuka langsung dari HP, tablet, atau laptop kasir dengan fitur hitung komisi karyawan otomatis dan rekap omzet harian tanpa repot kalkulator.
+
+Akses coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan tarif layanan awal Kakak secara gratis 😊 Boleh kami kirimkan video demonya 1 menit, Kak?\`;
+  }
+
+  // 4. Pilar Retail & Grosir (Toko Kelontong, Kosmetik, Konter HP, Butik, Petshop, Bangunan, ATK, Apotek)
+  return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk scan barcode produk, kontrol stok biar gak selisih, dan rekap laba modal harian saat ini sudah pakai sistem kasir otomatis atau masih rekap manual ya Kak?
+
+Kebetulan sistem kasir PJTech dirancang ringan untuk toko retail (bisa jalan di HP, tablet, maupun laptop kasir). Bisa scan barcode langsung dari kamera HP atau scanner USB, dan otomatis kasih peringatan kalau stok mulai habis.
+
+Coba gratisnya bisa diakses di https://pjtechumkm.com ya Kak. Tim kami juga siap bantu inputkan beberapa contoh produk awal secara gratis biar tinggal tes coba 😊 Boleh izin kirim demonya, Kak?\`;
 }
 
 // ── HELPER DELAY ANTI-BAN (30s - 60s) ────────────────────────────────────────
@@ -440,7 +490,7 @@ async function main() {
 if (process.argv[1] && process.argv[1].includes('cli-outreach')) {
   main();
 }
-\`;
+`;
 
 fs.writeFileSync(targetFile, content, 'utf8');
 console.log('Successfully written updated cli-outreach.ts to:', targetFile);

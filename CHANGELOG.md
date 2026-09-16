@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.0] - 2026-09-17
+
+### Added
+- **5-Ring Concentric Geo-Expansion Strategy (`sales-orchestrator.ts`)**:
+  - Mengunci **Ring 1 (Homebase Sumedang, Jatinangor, Tanjungsari)** sebagai prioritas utama penyisiran sebelum ekspansi ke kota lain.
+  - Mendukung struktur 5 Ring Zonasi Nasional (Ring 1 Homebase, Ring 2 Priangan-Bandung, Ring 3 Jabodetabek, Ring 4 Jateng-DIY, Ring 5 Jatim-Bali-Nasional).
+  - Mendukung override target kota fleksibel melalui variabel lingkungan `SALES_TARGET_CITY` / `TARGET_CITY`.
+- **Penyelarasan Scraper 4 Pilar Bisnis UMKM**:
+  - Google Maps keyword matrix kini mencakup 4 pilar bisnis UMKM sesuai hasil audit AI Kasir UMKM: Retail Modern & Kebutuhan, F&B Kuliner, Jasa & Servis, dan Rental/Travel/Properti.
+- **Template WhatsApp Soft-Selling & Concierge Onboarding (`one-sales-man`)**:
+  - Mengeliminasi copy hard-selling (*"nemu kontak dari Google Maps"* dan link ganda agency).
+  - Menerapkan copy berbasis empati dan pertanyaan operasional spesifik per sektor bisnis.
+  - Menambahkan tawaran **White-Glove Concierge Onboarding** (bantuan input gratis 2-3 data awal armada/menu/stok) untuk mengatasi drop-off akun uji coba.
+  - Menambahkan penekanan fleksibilitas **Multi-Device (bisa lewat HP, Tablet, maupun Laptop/PC)** tanpa perlu membeli mesin kasir fisik mahal.
+
+### Fixed
+- **JSDoc Syntax & Compiler Warning (`sales-orchestrator.ts`)**:
+  - Memperbaiki blok komentar JSDoc `/**` yang belum tertutup sehingga seluruh fungsi pipeline kembali terbaca sempurna.
+  - Meng-export `UMKM_CITIES` guna meniadakan error TS6133 unused variable (`npx tsc --noEmit` lulus dengan 0 error).
+
 ## [1.4.0] - 2026-09-16
 
 ### Added

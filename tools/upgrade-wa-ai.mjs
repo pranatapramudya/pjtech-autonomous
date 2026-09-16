@@ -341,12 +341,49 @@ function getCategoryFeature(category: string | null): string {
 }
 
 function getNicheHook(category: string | null, cleanName: string): string {
-  const feature = getCategoryFeature(category);
-  return \`Halo admin \${cleanName}, salam kenal! Nemu kontak dari Google Maps.
-Mau menawarkan akses Coba Gratis 14 Hari aplikasi Kasir PJTech untuk bantu \${feature}.
-Langsung akses dan coba gratis di sini kak: https://pjtechumkm.com
+  const cat = (category || '').toLowerCase();
 
-Oh ya, kalau misal butuh pembuatan sistem/website custom khusus untuk operasional bisnisnya, kami juga bisa bantu. Cek layanan kami di: https://pranajayatech.online ya kak :)\`;
+  // 1. Rental, Travel & Properti
+  if (cat.includes('rental') || cat.includes('sewa') || cat.includes('mobil') || cat.includes('motor') || cat.includes('travel') || cat.includes('kos') || cat.includes('homestay') || cat.includes('villa')) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk pencatatan jadwal booking armada/kamar, catat DP, dan cetak kuitansinya saat ini sudah pakai sistem otomatis atau masih rekap di buku/WA ya Kak?
+
+Kebetulan kami ada sistem kasir digital khusus usaha rental & penginapan (bisa dibuka fleksibel lewat HP, tablet, maupun laptop tanpa perlu beli alat mahal). Jadwal sewa rapi dan omzet harian kepantau langsung secara real-time.
+
+Akses uji coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan 2-3 data armada/unit awal Kakak secara gratis 😊 Boleh izin kirimkan contoh demonya, Kak?\`;
+  }
+
+  // 2. F&B Kuliner
+  if (cat.includes('kafe') || cat.includes('cafe') || cat.includes('kopi') || cat.includes('resto') || cat.includes('makan') || cat.includes('fnb') || cat.includes('kuliner') || cat.includes('kedai')) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, pas jam ramai, untuk rekap orderan nomor meja kasir dan cetak struk pesanan ke dapur saat ini sudah pakai sistem kasir otomatis atau masih manual ya Kak?
+
+Kebetulan kami mengembangkan sistem kasir UMKM kuliner yang bisa jalan fleksibel di HP pelayan, tablet kasir, maupun laptop tanpa perlu mesin kasir jutaan rupiah. Rekap meja rapi dan omzet harian bisa dipantau langsung dari HP owner.
+
+Akses coba gratisnya bisa langsung dicek di https://pjtechumkm.com ya Kak. Kalau mau dibantu inputkan beberapa menu awal biar tinggal tes pakai, tim kami siap bantu inputkan gratis Kak 😊\`;
+  }
+
+  // 3. Jasa & Servis
+  if (cat.includes('jasa') || cat.includes('servis') || cat.includes('salon') || cat.includes('barber') || cat.includes('bengkel') || cat.includes('laundry') || cat.includes('cuci')) {
+    return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk pembagian komisi bagi hasil capster/mekanik/karyawan dan cetak nota kasir saat ini sudah otomatis atau masih dihitung manual tiap tutup toko ya Kak?
+
+Kebetulan sistem kasir PJTech bisa dibuka langsung dari HP, tablet, atau laptop kasir dengan fitur hitung komisi karyawan otomatis dan rekap omzet harian tanpa repot kalkulator.
+
+Akses coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan tarif layanan awal Kakak secara gratis 😊 Boleh kami kirimkan video demonya 1 menit, Kak?\`;
+  }
+
+  // 4. Retail & Grosir
+  return \`Halo Kak di \\\${cleanName}, salam kenal dari tim PJTech 🙏
+
+Izin tanya Kak, untuk scan barcode produk, kontrol stok biar gak selisih, dan rekap laba modal harian saat ini sudah pakai sistem kasir otomatis atau masih rekap manual ya Kak?
+
+Kebetulan sistem kasir PJTech dirancang ringan untuk toko retail (bisa jalan di HP, tablet, maupun laptop kasir). Bisa scan barcode langsung dari kamera HP atau scanner USB, dan otomatis kasih peringatan kalau stok mulai habis.
+
+Coba gratisnya bisa diakses di https://pjtechumkm.com ya Kak. Tim kami juga siap bantu inputkan beberapa contoh produk awal secara gratis biar tinggal tes coba 😊 Boleh izin kirim demonya, Kak?\`;
 }
 
 whatsappClient.on('ready', () => {
