@@ -351,7 +351,7 @@ Izin tanya Kak, untuk pencatatan jadwal booking armada/kamar, catat DP, dan ceta
 
 Kebetulan kami ada sistem kasir digital khusus usaha rental & penginapan (bisa dibuka fleksibel lewat HP, tablet, maupun laptop tanpa perlu beli alat mahal). Jadwal sewa rapi dan omzet harian kepantau langsung secara real-time.
 
-Akses uji coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan 2-3 data armada/unit awal Kakak secara gratis 😊 Boleh izin kirimkan contoh demonya, Kak?\`;
+Akses uji coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan 2-3 data armada/unit awal Kakak secara gratis 😊\`;
   }
 
   // 2. F&B Kuliner
@@ -373,7 +373,7 @@ Izin tanya Kak, untuk pembagian komisi bagi hasil capster/mekanik/karyawan dan c
 
 Kebetulan sistem kasir PJTech bisa dibuka langsung dari HP, tablet, atau laptop kasir dengan fitur hitung komisi karyawan otomatis dan rekap omzet harian tanpa repot kalkulator.
 
-Akses coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan tarif layanan awal Kakak secara gratis 😊 Boleh kami kirimkan video demonya 1 menit, Kak?\`;
+Akses coba gratisnya bisa dicoba di https://pjtechumkm.com ya Kak. Biar nggak repot setup dari nol, tim kami juga siap bantu inputkan tarif layanan awal Kakak secara gratis 😊\`;
   }
 
   // 4. Retail & Grosir
@@ -383,7 +383,7 @@ Izin tanya Kak, untuk scan barcode produk, kontrol stok biar gak selisih, dan re
 
 Kebetulan sistem kasir PJTech dirancang ringan untuk toko retail (bisa jalan di HP, tablet, maupun laptop kasir). Bisa scan barcode langsung dari kamera HP atau scanner USB, dan otomatis kasih peringatan kalau stok mulai habis.
 
-Coba gratisnya bisa diakses di https://pjtechumkm.com ya Kak. Tim kami juga siap bantu inputkan beberapa contoh produk awal secara gratis biar tinggal tes coba 😊 Boleh izin kirim demonya, Kak?\`;
+Coba gratisnya bisa diakses di https://pjtechumkm.com ya Kak. Tim kami juga siap bantu inputkan beberapa contoh produk awal secara gratis biar tinggal tes coba 😊\`;
 }
 
 whatsappClient.on('ready', () => {
