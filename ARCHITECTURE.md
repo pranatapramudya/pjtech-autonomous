@@ -11,12 +11,20 @@ Sistem ini didesain menggunakan prinsip **Modular Multi-Repo (Sibling Orchestrat
 ```mermaid
 graph TD
     %% User & Interfaces
-    User([📱 Pengguna / Admin]) <-->|Chat & Inline Buttons| TeleBot[Telegram Bot Controller<br/>telegram.ts]
+    User([📱 Mas Pranata / Founder]) <-->|Telegram Chat & Inline Buttons| TeleBot[Telegram Bot Controller<br/>telegram.ts]
 
     %% Main Telegram Hub
     subgraph PJTECH_AUTONOMOUS ["📁 D:/Coding/pjtech-autonomous (Command Center & Marketing)"]
         TeleBot --> Orchestrator[sales-orchestrator.ts<br/>Sibling Bridge Engine]
         TeleBot --> VideoPipeline[run_pipeline.ts<br/>Remotion Video Generator]
+        TeleBot --> AICEO[ai-ceo-agent.ts<br/>Autonomous ReAct AI CEO]
+
+        subgraph CEOTools ["AI CEO Live Tools"]
+            AICEO -->|getFinanceStatus| MayarLive[Mayar.id v2 API<br/>Live Balance & Omset]
+            AICEO -->|getYoutubeStats| YTLive[YouTube Data API v3<br/>Live Views & Retention]
+            AICEO -->|getContentInsights| Flywheel[content_insights.json<br/>Winning Hooks & Banned Angles]
+            AICEO -->|triggerSystemTask| AutoTasks[Autonomous Tasks<br/>Flywheel / Nightly Report]
+        end
 
         subgraph VideoEngine ["Video Production Engine"]
             VideoPipeline --> Gemini[Google Gemini 3.8 Flash<br/>Scriptwriting & Directing]
@@ -32,8 +40,10 @@ graph TD
         Orchestrator -->|exec npx tsx| CLI_Status[src/pipeline/cli-status.ts]
         Orchestrator -->|spawn npx tsx| CLI_Scrape[src/pipeline/cli-scrape.ts]
         Orchestrator -->|spawn npx tsx| CLI_Outreach[src/pipeline/cli-outreach.ts]
+        AICEO -->|getSalesMetrics| CLI_NightlyStats[src/pipeline/cli-nightly-stats.ts]
 
         CLI_Status --> Prisma[(Neon PostgreSQL<br/>Prospects DB)]
+        CLI_NightlyStats --> Prisma
         CLI_Scrape --> GMapsScraper[Playwright Headless<br/>Google Maps Scraper]
         GMapsScraper --> Prisma
 
@@ -174,3 +184,89 @@ Untuk menjamin video demo E2E (`run_pipeline.ts`) berjalan mulus tanpa terhenti 
 
 ### 3. Smart Category Mapping & Funnel Outreach
 Sistem cold outreach memetakan 4 pilar bisnis secara cerdas (OR query multi-keyword) agar data hasil *scraping* Google Maps tidak terlewatkan dan pesan WhatsApp yang terkirim memiliki *hook* spesifik yang relevan dengan jenis usaha calon klien.
+
+---
+
+## 🗺️ Multi-Kota UMKM Rotation (v1.3.0)
+
+Sistem scraping kini menjangkau **10 kota UMKM density tinggi** secara otomatis, dirotasi per minggu tanpa intervensi manual:
+
+```
+UMKM_CITIES = [Bandung, Surabaya, Medan, Makassar, Yogyakarta,
+               Semarang, Palembang, Denpasar, Malang, Bekasi]
+```
+
+Rental & Properti memiliki list kota wisata khusus (Bali, Lombok, Raja Ampat, Flores, Bromo, dll). Rotasi dihitung dari `weekIndex % cityCount` sehingga setiap minggu otomatis pindah ke kota baru.
+
+**Keyword Anti-Mall:** Setiap keyword scraping menggunakan frasa kualitatif (*"lokal"*, *"UMKM"*, *"bukan franchise"*, *"rumahan"*) untuk memfilter hasil Google Maps agar hanya UMKM kecil yang muncul.
+
+---
+
+## 📊 Outreach Reporting Sync (v1.3.0)
+
+Sebelumnya terdapat desync antara laporan Telegram dan kondisi WA Business real. Arsitektur pelaporan sekarang:
+
+```
+cli-outreach.ts stdout
+    → [OUTREACH_SUCCESS] per pesan → realContacted++
+    → [OUTREACH_FAILED]  per pesan → realFailed++
+    → [OUTREACH_DONE] Sukses: X, Gagal: Y → final ground truth
+
+runOutreachBatch()
+    → return { contacted: realContacted, failed: realFailed }
+
+autonomous-scheduler.ts (cron 14:00)
+    → onProgress: editMessageText real-time
+    → Laporan final: ✅ Terkirim X | ❌ Gagal Y | 📦 Total Z
+```
+
+Laporan Telegram sekarang **100% sinkron** dengan kondisi WA Business aktual.
+
+---
+
+## 🧠 Autonomous ReAct Agent: AI CEO & Chief of Staff (`ai-ceo-agent.ts`)
+
+Ekosistem PJTech ditenagai oleh **AI CEO & Chief of Staff Agent** berbasis ReAct (*Reasoning + Acting*) dengan **Native Function Calling** dari Google Gemini (`gemini-3.6-flash`, `gemini-flash-latest`, `gemini-2.5-flash`). AI CEO bukan sekadar chatbot pasif, melainkan Co-Founder virtual yang memiliki koneksi data langsung ke seluruh pilar operasional.
+
+### 1. Pola Aliran ReAct (Multi-Turn Function Calling Loop)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Founder as Mas Pranata (Telegram)
+    participant Bot as telegram.ts
+    participant Agent as ai-ceo-agent.ts
+    participant Gemini as Gemini Flash (Tools Enabled)
+    participant Systems as Live Systems (Mayar / Neon / YouTube / Flywheel)
+
+    Founder->>Bot: "Bagaimana kondisi keuangan & video YouTube hari ini?"
+    Bot->>Agent: chat(query, senderName)
+    Agent->>Gemini: generateContent(prompt + tools)
+    Gemini-->>Agent: functionCalls: [getFinanceStatus(), getYoutubeStats()]
+    par Query Live Mayar.id
+        Agent->>Systems: getMayarFinanceReport()
+        Systems-->>Agent: { activeBalance, todayRevenue, transactions }
+    and Query Live YouTube Data API v3
+        Agent->>Systems: fetchRecentYouTubeVideoMetrics()
+        Systems-->>Agent: { videos, views, likes }
+    end
+    Agent->>Gemini: Kirim Tool Responses (Role: User)
+    Gemini-->>Agent: Sintesis Strategis Lintas Divisi (Final Text)
+    Agent-->>Bot: Format Markdown / Fallback Plain Text
+    Bot-->>Founder: Respon Tajam + Poin Aksi Eksekutif
+```
+
+### 2. Katalog Live System Tools
+
+| Nama Tool | Target Sistem | Parameter | Data yang Dihasilkan |
+| :--- | :--- | :--- | :--- |
+| `getFinanceStatus` | Mayar.id v2 API Gateway | *None* | Saldo aktif, saldo tertunda, omset hari ini, dan 5 transaksi terbaru. |
+| `getSalesMetrics` | Neon PostgreSQL via Prisma | *None* | Prospek baru hari ini, total WhatsApp contacted, response rate, dan hot leads. |
+| `getYoutubeStats` | YouTube Data API v3 | *None* | Views, likes, komentar, dan daftar video Shorts terbit hari ini. |
+| `getContentInsights` | `content_insights.json` | *None* | Winning hooks, banned patterns, durasi optimal, dan feedback loop terakhir. |
+| `triggerSystemTask` | Autonomous Pipelines | `taskName` | Memicu `run_analytics_flywheel`, `run_nightly_report`, atau `test_system_health`. |
+
+### 3. Cross-Divisional Synthesis & Anti-Hallucination
+- **Zero Hallucination Rule**: Sistem prompt secara tegas melarang pembuatan angka imajiner. Jika user bertanya performa atau keuangan, agent **wajib** memanggil tools.
+- **Cross-Divisional Bridge**: Menghubungkan metrik antar divisi secara otomatis (contoh: hook video YouTube yang menghasilkan views tinggi langsung direkomendasikan untuk dipakai naskah outreach WhatsApp di divisi Sales).
+- **Persistent Memory (`ceo_memory.json`)**: Menyimpan target perusahaan, catatan arah bisnis strategis, dan 14 percakapan terakhir (7 pasang giliran) secara persisten antar restart server.

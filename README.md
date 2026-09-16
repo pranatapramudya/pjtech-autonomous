@@ -23,6 +23,7 @@ D:/Coding/
 │       │   ├── sales-orchestrator.ts  ← Jembatan pengendali sibling project one-sales-man
 │       │   ├── kliper-orchestrator.ts ← Jembatan pengendali sibling project kliper-autonomous
 │       │   ├── pipeline/
+│       │   │   ├── ai-ceo-agent.ts         ← Autonomous ReAct AI CEO Agent (Gemini Function Calling)
 │       │   │   ├── autonomous-scheduler.ts ← 6 Rutinitas Cron Job harian (08:30 - 21:30)
 │       │   │   ├── youtube-uploader.ts     ← Uploader YouTube Shorts otomatis via Google API
 │       │   │   ├── analytics-loop.ts       ← AI Feedback Loop & Retrospektif Hook Gemini
@@ -81,10 +82,16 @@ Seluruh operasi bisnis dikendalikan secara nirkabel dari smartphone melalui Tele
 
 ## 👔 3. Autonomous Executive Board (AI CEO & Chief of Staff)
 
-Ekosistem PJTech dilengkapi dewan eksekutif berbasis AI yang bertindak sebagai Chief of Staff pribadi Mas Pranata:
-* **Konsultasi & Penanganan Masalah Tingkat Tinggi**: Menerima curhat operasional, keluhan bisnis, atau instruksi strategis, lalu menghasilkan *Root Cause Analysis (RCA)* cepat dan rencana tindakan teknis yang ringkas dan terarah.
-* **Zero-Token-Waste Sliding Window Memory**: Menggunakan buffer memori geser (*sliding window*) yang hanya mempertahankan **5 interaksi percakapan terakhir** (maksimal 10 pesan) yang dikirimkan ke model LLM Gemini. Riwayat lama otomatis dipangkas di RAM sehingga konsumsi token tetap minimal dan stabil.
-* **Natural Language Fallthrough Routing**: Setiap pesan teks bebas non-perintah di Telegram (misalnya *"CEO nya mana?"*, *"Penjualan minggu ini turun, solusinya apa?"*) otomatis dialihkan ke AI CEO tanpa perlu mengetikkan slash command.
+Ekosistem PJTech dilengkapi dewan eksekutif berbasis **Autonomous ReAct Agent** (`ai-ceo-agent.ts`) yang bertindak sebagai Chief of Staff pribadi Mas Pranata:
+* **Native Function Calling (Live System Tools)**: AI CEO secara otonom memanggil tools live untuk mengambil fakta nyata sebelum merumuskan kesimpulan strategis:
+  - `getFinanceStatus`: Query saldo aktif, saldo pending, dan omset real-time gateway Mayar.id v2.
+  - `getSalesMetrics`: Query data prospek, outreach WhatsApp, response rate, dan hot leads dari Neon PostgreSQL via Prisma.
+  - `getYoutubeStats`: Query views, likes, dan metrik performa Shorts hari ini via YouTube Data API v3.
+  - `getContentInsights`: Query database winning hooks, formula konten, dan banned patterns dari `content_insights.json`.
+  - `triggerSystemTask`: Menjalankan evaluasi analytics flywheel atau trigger laporan malam secara langsung.
+* **Cross-Divisional Strategic Synthesis**: Menghubungkan titik-titik data lintas divisi secara tajam (contoh: menganalisis mengapa views YouTube tinggi belum terkonversi ke checkout Mayar, lalu menyarankan hook video tersebut diadopsi ke naskah outreach WhatsApp Sales).
+* **Persistent Long-Term Memory (`ceo_memory.json`)**: Menyimpan target perusahaan, pedoman strategis, dan 14 interaksi percakapan terakhir secara persisten di disk agar tidak hilang saat server restart.
+* **Natural Language Fallthrough Routing**: Setiap pesan teks bebas non-perintah di Telegram otomatis dialihkan ke AI CEO tanpa perlu mengetikkan slash command.
 
 ---
 
@@ -102,22 +109,30 @@ Memantau perkembangan teknologi terkini 24/7 tanpa pemborosan komputasi atau tok
 Divisi Sales dirancang untuk melakukan jemput bola calon klien B2B secara terukur dan aman dari risiko pemblokiran nomor WhatsApp:
 
 1. **Google Maps Scraper (Playwright Headless)**:
-   - Mencari prospek lokal berdasarkan kata kunci (misal: *Kafe di Bandung*, *Barbershop di Jakarta*, *Gym di Surabaya*).
+   - Mencari prospek UMKM lokal berdasarkan kata kunci yang spesifik — secara eksplisit menghindari mall, franchise nasional, dan minimarket jaringan besar.
    - Menarik nama bisnis, nomor telepon WhatsApp, rating, dan alamat.
-2. **Database PostgreSQL (Neon Serverless)**:
+2. **Multi-Kota UMKM Rotation (v1.3.0)**:
+   - Scraping kini menjangkau **10 kota UMKM density tinggi** yang dirotasi otomatis per minggu: Bandung, Surabaya, Medan, Makassar, Yogyakarta, Semarang, Palembang, Denpasar, Malang, Bekasi.
+   - Rental Kendaraan & Properti memiliki list kota wisata khusus (Bali, Lombok, Raja Ampat, Flores, Bromo, Pangandaran, dll).
+   - Setiap hari memiliki 4 variasi keyword yang dirotasi mingguan untuk mencegah duplikat database.
+3. **Database PostgreSQL (Neon Serverless)**:
    - Prospek disimpan secara terpusat dengan Prisma ORM.
    - Dilengkapi deduplikasi otomatis agar satu nomor tidak pernah dihubungi lebih dari sekali.
-3. **Outreach WhatsApp Humanis & Anti-Ban**:
-   - Mengirim pesan pembuka *Free Trial 14 Hari* yang ramah per batch (strict **5 kontak/sesi**).
-   - Jeda acak (*random jitter* **30–60 detik**) antar pesan untuk meniru ritme mengetik manusia dan menghindari deteksi bot WhatsApp.
-4. **AI Negotiator (Groq Llama 3 70B)**:
+4. **Outreach WhatsApp Humanis & Anti-Ban**:
+   - Mengirim pesan pembuka *Free Trial 14 Hari* yang ramah per batch (**10 kontak/sesi** via cron 14:00 WIB otomatis).
+   - Jeda acak (*random jitter* **30–60 detik**) antar pesan untuk meniru ritme mengetik manusia.
+   - Pesan disesuaikan per niche: F&B (rekap orderan meja), Retail (catat stok & penjualan), Jasa (komisi kapster), Rental (jadwal sewa unit).
+5. **Real-Time Telegram Reporting (v1.3.0)**:
+   - Laporan outreach sekarang **100% akurat & sinkron** dengan WA Business.
+   - Format laporan: `✅ Terkirim: X | ❌ Gagal: Y | 📦 Total: Z prospek diproses`.
+   - Progress update real-time selama proses berlangsung (via `editMessageText`).
+6. **AI Negotiator (Groq Llama 3 70B)**:
    - Merespons balasan pesan prospek secara otomatis dan kontekstual.
    - Mampu mendiagnosa masalah bisnis prospek dan menawarkan:
      - **SaaS Kasir UMKM** ([pjtechumkm.com](https://pjtechumkm.com)) untuk F&B, retail, salon, rental.
-     - **Custom Software / Web Development** ([pranajayatech.online](https://www.pranajayatech.online/)) untuk kebutuhan antrean klinik, sistem barcode kustom, dll.
-5. **Human Handoff & Hot Leads**:
-   - Saat prospek menunjukkan minat beli, meminta harga diskon, atau mengajak meeting, AI langsung menghentikan balasan otomatis dan mengaktifkan status `HOT_LEAD`.
-   - Bot Telegram mengirimkan alert instan ke smartphone Mas Pranata beserta link langsung `https://wa.me/...` untuk penutupan penjualan secara langsung.
+     - **Custom Software / Web Development** ([pranajayatech.online](https://www.pranajayatech.online/)) untuk kebutuhan sistem kustom.
+7. **Human Handoff & Hot Leads**:
+   - Saat prospek menunjukkan minat beli, AI mengaktifkan status `HOT_LEAD` dan mengirim alert ke Telegram beserta link `https://wa.me/...` untuk closing langsung.
 
 ---
 

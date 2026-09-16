@@ -4,6 +4,61 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.4.0] - 2026-09-16
+
+### Added
+- **Cutting-Edge Autonomous ReAct AI CEO Agent (`ai-ceo-agent.ts`)**:
+  - Upgraded AI CEO dari simple chatbot menjadi full Autonomous ReAct Agent dengan Google Gemini Native Function Calling.
+  - Multi-turn execution loop (hingga 4 iterasi reasoning-action) yang otomatis memanggil tools sebelum merumuskan jawaban strategis.
+  - **Live System Tools Suite**:
+    - `getFinanceStatus`: Query live saldo aktif, pending, dan omset harian dari Mayar.id v2 API.
+    - `getSalesMetrics`: Query live pipeline prospek, outreach, dan response rate dari Neon PostgreSQL via Prisma (`cli-nightly-stats.ts`).
+    - `getYoutubeStats`: Query live views, likes, dan metrik retensi video YouTube Shorts hari ini via YouTube Data API v3.
+    - `getContentInsights`: Query database winning hooks, formula konten, dan banned patterns dari `content_insights.json`.
+    - `triggerSystemTask`: Memicu tugas teknis otonom (`run_analytics_flywheel`, `run_nightly_report`, `test_system_health`).
+  - **Persistent Long-Term Strategic Memory (`src/data/ceo_memory.json`)**:
+    - Menyimpan target perusahaan, pedoman strategis, dan 14 riwayat percakapan secara permanen di disk agar tidak hilang saat server restart/mati listrik.
+  - **Cross-Divisional Strategic Synthesis**:
+    - Penalaran lintas divisi otomatis (misal: menyarankan hook video YouTube dengan views tinggi ke naskah outreach WhatsApp Sales).
+
+### Improved
+- **Telegram Bot AI CEO Integration**:
+  - `handleCeoChat` di `telegram.ts` dialihkan ke modul terisolasi `aiCeoAgent.chat`.
+  - Dukungan fallback pesan otomatis jika terjadi error formatting Markdown Telegram.
+  - Pembersihan memori in-memory usang (`ceoMemory`, `pushCeoMemory`, `CEO_SYSTEM_PROMPT`) dari `telegram.ts`.
+- **System Hardening & Test Suite**:
+  - Menambahkan script pengujian independen `scratch/test-ai-ceo.ts`.
+  - Validasi TypeScript komprehensif (`0 error`).
+
+## [1.3.0] - 2026-09-15
+
+### Fixed
+- **Sales Outreach ↔ Telegram Desync (Root Cause Eliminated)**:
+  - Bug: Cron 14:00 WIB hanya mengirim notif awal *"akan kirim 10 kontak"* ke Telegram tapi **tidak pernah mengirim laporan hasil** setelah outreach selesai.
+  - Bug: `result.success` selalu `true` meski ada pesan WA yang gagal secara individual — karena hanya mengecek exit code proses, bukan status per pesan.
+  - Bug: Laporan manual trigger (via tombol Telegram) hard-coded *"5 sudah disapa"* — selalu salah tanpa data real.
+  - **Fix**: `runOutreachBatch` sekarang melacak `realContacted` & `realFailed` secara real-time dari stream stdout CLI, dengan parsing `[OUTREACH_DONE] Sukses: X, Gagal: Y` sebagai ground truth tertinggi.
+  - **Fix**: Cron 14:00 di `autonomous-scheduler.ts` sekarang mengirim progress update real-time via `editMessageText` + laporan final akurat ke Telegram setelah outreach selesai.
+  - **Fix**: Laporan manual campaign di `telegram.ts` sekarang menggunakan `result.contacted` / `result.failed` dari data real.
+
+### Added
+- **Multi-Kota UMKM Rotation (10 Kota)**:
+  - Sales scraping diperluas dari hanya Bandung ke **10 kota UMKM density tinggi**: Bandung, Surabaya, Medan, Makassar, Yogyakarta, Semarang, Palembang, Denpasar, Malang, Bekasi.
+  - Rental Kendaraan (Kamis) punya kota list wisata khusus: Bali, Yogyakarta, Lombok, Malang, Labuan Bajo, Raja Ampat, dst.
+  - Rental Properti (Jumat) menyasar destinasi wisata: Pangandaran, Lembang, Bali, Lombok, Flores, Bromo, Wakatobi, Belitung, Labuan Bajo.
+  - Kota **dirotasi otomatis** setiap minggu berdasarkan `weekIndex % 10` — tanpa intervensi manual.
+- **UMKM-Specific Anti-Mall Keywords**:
+  - Semua keyword scraping diperbarui secara eksplisit menghindari mall, franchise nasional, dan minimarket jaringan besar.
+  - Setiap hari memiliki **4 variasi keyword** yang dirotasi mingguan (anti-duplikat database).
+  - Keyword menggunakan frasa kualitatif seperti *"bukan franchise"*, *"lokal"*, *"UMKM"*, *"rumahan"* untuk filter Google Maps.
+- **Real-Time Outreach Progress di Telegram**:
+  - Cron 14:00 kini menampilkan status update langsung (via `editMessageText`) selama proses outreach berlangsung.
+  - Format laporan final baru: `✅ Terkirim: X | ❌ Gagal: Y | 📦 Total: Z prospek diproses`.
+
+### Improved
+- **Return Types Sales Orchestrator**: `runOutreachBatch` dan `runDailyCampaign` sekarang mengembalikan `contacted?: number` dan `failed?: number` untuk transparansi penuh ke semua caller.
+- **TypeScript**: Seluruh codebase compile `0 error` setelah semua perubahan.
+
 ## [1.2.1] - 2026-09-10
 
 ### Added
