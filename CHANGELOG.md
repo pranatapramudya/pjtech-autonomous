@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.0.0] - 2026-09-18
+
+### Added
+- **Unified Boot Autostart (`install-unified-boot.ps1`)**: Single script registers all 5 services as Windows Scheduled Tasks (SYSTEM on boot, USER on logon):
+  1. 9router LLM Gateway (port 9000) — ONSTART +30s
+  2. kasir-umkm Server (port 3000) — ONSTART +1m
+  3. WhatsApp Business Daemon (port 3847) — ONSTART +1m30s
+  4. Telegram Bot Command Center — ONSTART +2m (waits for dependencies)
+  5. Hermes Agent (AI Assistant) — ONLOGON +30s (user session required)
+- **Anti-Sleep Guard**: `powercfg standby-timeout-ac 0` + `hibernate-timeout-ac 0` (PC stays awake 24/7 on AC)
+- **Single-Instance Lock**: Prevents Telegram 409 Conflict on bot startup
+- **Auto-wait Dependencies**: Bot waits for 9router + kasir + WA ready before starting
+
+### Fixed
+- **Video Pipeline Import Chain**: Added `src/run_pipeline.ts` re-export fixing `runPipeline()` import in autonomous-scheduler
+- **YouTube Uploader**: Resumable upload with progress tracking, duration validation (≤60s), specific error handling (QUOTA_EXCEEDED, INVALID_VIDEO_FORMAT, DURATION_TOO_LONG)
+- **Telegram Bot**: Crash-proof global handlers (uncaughtException/unhandledRejection log but don't exit), exponential backoff polling guard (3s→6s→12s→24s→48s, max 5 attempts)
+
+### Changed
+- **Autonomous Scheduler**: Catch-up recovery engine (every 30min 09:00-22:00), marketing slots 12:00/18:30 WIB with auto-retry (max 3x)
+- **Sales Orchestrator**: Integrated with new unified boot, Neon warm-up crons (08:28, 12:58, 14:58)
+
+### Removed
+- Legacy `install-boot-autostart.ps1` / `install-hermes-autostart.ps1` (kept for reference, superseded by unified script)
+
+---
+
 ## [1.5.0] - 2026-09-17
 
 ### Added
