@@ -163,7 +163,27 @@ if (-not $waOk) {
     Write-Host "[OK] WhatsApp Business Daemon sudah aktif di port 3847." -ForegroundColor Green
 }
 
-# --- 5. START TELEGRAM BOT COMMAND CENTER ---
+# --- 5. START CLOUDFLARE TUNNEL (UNTUK URL PUBLIK HTTPS MARKETING) ---
+Write-Host "===========================================================" -ForegroundColor Cyan
+Write-Host "[*] Memeriksa & Menyalakan Cloudflare Tunnel..." -ForegroundColor Cyan
+Write-Host "===========================================================" -ForegroundColor Cyan
+
+$cfPid = Get-CimInstance Win32_Process -Filter "Name='cloudflared.exe'" -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*localhost:3000*" }
+if ($cfPid) {
+    Write-Host "[OK] Cloudflare Tunnel sudah aktif (PID: $($cfPid.ProcessId))." -ForegroundColor Green
+} else {
+    Write-Host "[*] Menyalakan Cloudflare Tunnel di background (http://localhost:3000 -> HTTPS publik)..." -ForegroundColor Yellow
+    try {
+        # cloudflared biasanya sudah di PATH kalau diinstall via winget/scoop/choco
+        Start-Process -FilePath "cloudflared.exe" -ArgumentList "tunnel", "--url", "http://localhost:3000" -WindowStyle Hidden
+        Write-Host "[OK] Cloudflare Tunnel diluncurkan. Cek log untuk URL publik (https://xxx.trycloudflare.com)." -ForegroundColor Green
+    } catch {
+        Write-Warning "[!] Gagal menjalankan cloudflared. Pastikan sudah terinstall: winget install Cloudflare.cloudflared"
+    }
+}
+Write-Host ""
+
+# --- 6. START TELEGRAM BOT COMMAND CENTER ---
 Write-Host "===========================================================" -ForegroundColor Cyan
 Write-Host "[*] Menyalakan Bot Telegram..." -ForegroundColor Green
 Write-Host "===========================================================" -ForegroundColor Cyan
