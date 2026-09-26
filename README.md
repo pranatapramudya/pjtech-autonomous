@@ -35,13 +35,23 @@ D:/Coding/
 ├── one-sales-man/                     ← [DIVISI SALES: B2B COLD OUTREACH AUTO-PILOT]
 │   ├── src/
 │   │   ├── pipeline/
-│   │   │   ├── cli-scrape.ts          ← Scraper Google Maps via Playwright Headless
-│   │   │   ├── cli-outreach.ts        ← WhatsApp Blaster dengan delay anti-ban
+│   │   │   ├── cli-scrape.ts          ← Scraper Google Maps via Playwright Headless (Legacy CLI)
+│   │   │   ├── cli-outreach.ts        ← WhatsApp Blaster dengan delay anti-ban (Legacy)
 │   │   │   ├── cli-pair.ts            ← Mode aman pairing WhatsApp Business (Tanpa kirim pesan)
+│   │   │   ├── cli-email-outreach.ts  ← **NEW: Email Cold Outreach via Resend (3k/mo free)**
+│   │   │   ├── auto-scrape.ts         ← **NEW: Auto Scrape Orchestrator (Vertikal + Geo Expansion)**
+│   │   │   ├── master-pipeline.ts     ← **NEW: Master Pipeline (Scrape → Email → Report → Telegram)**
+│   │   │   ├── export-report.ts       ← **NEW: Analytics Report (Excel 6 sheets: Kota, Kategori, Matrix)**
 │   │   │   └── cli-status.ts          ← Endpoint statistik prospek & Hot Leads
-│   │   ├── whatsapp/client.ts         ← WhatsApp Web JS + Groq Llama 3 AI Negotiator
-│   │   └── lib/prisma.ts              ← Prisma Client ORM
-│   └── prisma/schema.prisma           ← Schema Database PostgreSQL (Neon Serverless)
+│   │   ├── scraper/
+│   │   │   └── gmaps.ts               ← **UPDATED: Extract email dari Maps, Website, IG, FB + WA number**
+│   │   ├── email/
+│   │   │   └── resend-client.ts       ← **NEW: Resend wrapper + UMKM email templates**
+│   │   ├── lib/
+│   │   │   ├── prisma.ts              ← Prisma Client ORM
+│   │   │   └── telegram.ts            ← **NEW: Telegram notifikasi & document sender**
+│   │   └── whatsapp/client.ts         ← WhatsApp Web JS + Groq Llama 3 AI Negotiator (Legacy)
+│   └── prisma/schema.prisma           ← Schema DB: Prospect (email, emailSource, whatsappNumber), ScrapingState
 │
 ├── kliper-autonomous/                 ← [DIVISI AFFILIATE: AUTO VIDEO CLIPPING ENGINE]
 │   └── video-engine/
@@ -104,35 +114,71 @@ Memantau perkembangan teknologi terkini 24/7 tanpa pemborosan komputasi atau tok
 
 ---
 
-## 💼 5. Divisi Sales: One Sales Man (B2B Auto-Pilot)
+## 💼 5. Divisi Sales: One Sales Man (B2B Auto-Pilot) — **EMAIL-FIRST v2.0**
 
-Divisi Sales dirancang untuk melakukan jemput bola calon klien B2B secara terukur dan aman dari risiko pemblokiran nomor WhatsApp:
+Divisi Sales kini beralih ke strategi **Email Cold Outreach** (legal, scalable, free 3k/bulan via Resend) menghindari risiko ban WhatsApp. WA number tetap di-scrape sebagai amunisi manual.
 
-1. **Google Maps Scraper (Playwright Headless)**:
-   - Mencari prospek UMKM lokal berdasarkan kata kunci yang spesifik — secara eksplisit menghindari mall, franchise nasional, dan minimarket jaringan besar.
-   - Menarik nama bisnis, nomor telepon WhatsApp, rating, dan alamat.
-2. **Multi-Kota UMKM Rotation (v1.3.0)**:
-   - Scraping kini menjangkau **10 kota UMKM density tinggi** yang dirotasi otomatis per minggu: Bandung, Surabaya, Medan, Makassar, Yogyakarta, Semarang, Palembang, Denpasar, Malang, Bekasi.
-   - Rental Kendaraan & Properti memiliki list kota wisata khusus (Bali, Lombok, Raja Ampat, Flores, Bromo, Pangandaran, dll).
-   - Setiap hari memiliki 4 variasi keyword yang dirotasi mingguan untuk mencegah duplikat database.
-3. **Database PostgreSQL (Neon Serverless)**:
-   - Prospek disimpan secara terpusat dengan Prisma ORM.
-   - Dilengkapi deduplikasi otomatis agar satu nomor tidak pernah dihubungi lebih dari sekali.
-4. **Outreach WhatsApp Humanis & Anti-Ban**:
-   - Mengirim pesan pembuka *Free Trial 14 Hari* yang ramah per batch (**10 kontak/sesi** via cron 14:00 WIB otomatis).
-   - Jeda acak (*random jitter* **30–60 detik**) antar pesan untuk meniru ritme mengetik manusia.
-   - Pesan disesuaikan per niche: F&B (rekap orderan meja), Retail (catat stok & penjualan), Jasa (komisi kapster), Rental (jadwal sewa unit).
-5. **Real-Time Telegram Reporting (v1.3.0)**:
-   - Laporan outreach sekarang **100% akurat & sinkron** dengan WA Business.
-   - Format laporan: `✅ Terkirim: X | ❌ Gagal: Y | 📦 Total: Z prospek diproses`.
-   - Progress update real-time selama proses berlangsung (via `editMessageText`).
-6. **AI Negotiator (Groq Llama 3 70B)**:
-   - Merespons balasan pesan prospek secara otomatis dan kontekstual.
-   - Mampu mendiagnosa masalah bisnis prospek dan menawarkan:
-     - **SaaS Kasir UMKM** ([pjtechumkm.com](https://pjtechumkm.com)) untuk F&B, retail, salon, rental.
-     - **Custom Software / Web Development** ([pranajayatech.online](https://www.pranajayatech.online/)) untuk kebutuhan sistem kustom.
-7. **Human Handoff & Hot Leads**:
-   - Saat prospek menunjukkan minat beli, AI mengaktifkan status `HOT_LEAD` dan mengirim alert ke Telegram beserta link `https://wa.me/...` untuk closing langsung.
+**Arsitektur Baru (Fully Automated):**
+
+1. **Auto Scrape Orchestrator (`auto-scrape.ts`)**:
+   - **Vertikal Prioritas**: Rental/Travel/Properti → F&B → Jasa/Servis → Retail
+   - **Ekspansi Geografis Bergelombang**: Wave 1 (Sumedang + 10 kota Jabar) → Wave 2 (Jabar + Jabodetabek) → Wave 3 (Pulau Jawa) → Wave 4 (Metropolitan Luar Jawa)
+   - **State Persist**: `ScrapingState` model di DB melacak wave, vertikal, kota terakhir → resume otomatis setelah restart
+
+2. **Multi-Source Email Extraction (`gmaps.ts`)**:
+   - **Google Maps Panel**: mailto links, teks kontak di panel detail
+   - **Website Bisnis**: Kunjungi website → cari email di halaman contact/about + mailto links
+   - **Instagram Bio**: Follow link IG dari Maps → ekstrak email dari bio
+   - **Facebook Page**: Follow link FB → ekstrak email dari halaman
+   - **WhatsApp Number**: WAJIB disimpan (field `whatsappNumber`) untuk manual outreach nanti
+   - **Anti-Detection**: Random delay 3-6s, resource blocking, rotating user-agent, headless mode
+
+3. **Database PostgreSQL (Neon Serverless) - Schema Baru**:
+   - `Prospect`: `email`, `emailSource` (maps/website/instagram/facebook), `whatsappNumber` (unique), `status` (PENDING/CONTACTED/HOT_LEAD/CLOSED)
+   - `ScrapingState`: Persist progress auto-scrape (wave, verticalIndex, cityIndex, totals)
+   - Deduplikasi otomatis by `whatsappNumber` + `email`
+
+4. **Email Outreach via Resend (`cli-email-outreach.ts`)**:
+   - **Target**: Hanya prospek `status=PENDING` + `email!=''` (anti-redundan)
+   - **Template per Vertikal**: Rental (jadwal sewa), F&B (order meja), Jasa (progress tracking), Retail (stok), Travel/Properti (booking)
+   - **Daily Limit**: 50 email/hari (Resend free tier), warmup 2 minggu (5→100/hari)
+   - **Delay**: 5-8s random antar kirim
+   - **Tracking**: Tags `category`, `city`, `email_src` (maps/website/ig/fb)
+   - **Update**: `status=CONTACTED`, `lastContactedAt`, `notes` dengan email ID
+
+5. **Analytics Report (`export-report.ts`) — 6 Sheets Excel**:
+   - **1. Summary**: Total, contacted, pending, by status, by email source
+   - **2. Reachout by Kota**: Kota mana sudah di-reachout, jumlah, rate email, kategori apa
+   - **3. Reachout by Kategori**: Kategori mana sudah di-reachout, kota mana, rate email
+   - **4. Matrix Kota x Kategori**: Kombinasi kota+kategori yg sudah di-reachout (anti-redundan visual)
+   - **5. Contacted Detail**: Detail bisnis yg sudah dikirim email (tracking reply)
+   - **6. Email Pending**: Target blast besok (PENDING + punya email)
+
+6. **Master Pipeline (`master-pipeline.ts`)**:
+   - **Full Auto**: Scrape (15) → Email Blast → Generate Report → **Kirim Excel ke Telegram**
+   - **Scheduler Mode**: `npm run master scheduler`
+     - 08,10,12,14,16,18: Auto scrape 10 prospek
+     - 10:00: Email outreach harian
+     - 20:00: Report harian + kirim Excel ke Telegram
+
+7. **Telegram Integration (`lib/telegram.ts`)**:
+   - Notifikasi real-time setiap phase
+   - Kirim file Excel report harian ke grup Telegram
+   - Menggunakan token `pjtech-autonomous` yang sudah ada
+
+**Legacy (Masih Tersedia tapi Tidak Dipakai):**
+- WhatsApp Blaster (`cli-outreach.ts`) — disabled, risiko ban
+- AI Negotiator WA (`whatsapp/client.ts`) — untuk inbound reply saja
+- Pairing WA (`cli-pair.ts`) — untuk setup nomor bisnis baru
+
+**Commands Baru:**
+```bash
+npm run master              # Full pipeline sekali jalan
+npm run auto:scrape -- --limit=15  # Auto scrape saja
+npm run email:outreach      # Email blast saja
+npm run report              # Generate report saja
+npm run master scheduler    # 24/7 scheduler mode
+```
 
 ---
 
