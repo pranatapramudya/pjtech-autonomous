@@ -112,20 +112,7 @@ New-BootTask `
     -Delay '0001:00'
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 3. WHATSAPP BUSINESS DAEMON (one-sales-man) - Port 3847
-# ─────────────────────────────────────────────────────────────────────────────
-if (Test-Path $OneSalesDir) {
-    New-BootTask `
-        -TaskName 'PJTECH WhatsApp Business Daemon' `
-        -Command 'C:\Windows\System32\cmd.exe' `
-        -Arguments "/c npx tsx src/whatsapp/daemon.ts >> `"$RootDir\whatsapp-daemon.log`" 2>&1" `
-        -Delay '0001:30'
-} else {
-    Write-Host "⚠️ one-sales-man tidak ditemukan di $OneSalesDir - lewati WA daemon." -ForegroundColor Yellow
-}
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. PJTECH AUTONOMOUS TELEGRAM BOT (Command Center)
+# 3. PJTECH AUTONOMOUS TELEGRAM BOT (Command Center)
 # ─────────────────────────────────────────────────────────────────────────────
 $BotLauncher = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 $BotArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$RootDir\bot.ps1`""
@@ -134,10 +121,26 @@ New-BootTask `
     -TaskName 'PJTECH Autonomous Telegram Bot' `
     -Command $BotLauncher `
     -Arguments $BotArgs `
-    -Delay '0002:00'  # Tunggu 9router + kasir + WA ready
+    -Delay '0002:00'  # Tunggu 9router + kasir ready (WA daemon di-start oleh bot.ps1 jika perlu)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 5. HERMES AGENT (AI Assistant) - USER LOGON (bukan SYSTEM!)
+# 4. ONE-SALES-MAN SCHEDULER (Divisi Sales - Scrape, Email, Report)
+# ─────────────────────────────────────────────────────────────────────────────
+if (Test-Path $OneSalesDir) {
+    $OneSalesLauncher = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $OneSalesArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command `"cd '$OneSalesDir'; npx tsx src/pipeline/master-pipeline.ts scheduler`""
+
+    New-BootTask `
+        -TaskName 'PJTECH One-Sales-Man Scheduler' `
+        -Command $OneSalesLauncher `
+        -Arguments $OneSalesArgs `
+        -Delay '0003:00'  # Tunggu kasir + WA + bot ready
+} else {
+    Write-Host "⚠️ one-sales-man tidak ditemukan di $OneSalesDir - lewati Sales Scheduler." -ForegroundColor Yellow
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 6. HERMES AGENT (AI Assistant) - USER LOGON (bukan SYSTEM!)
 # ─────────────────────────────────────────────────────────────────────────────
 $HermesExe = "C:\Users\Pranata Pramudya\AppData\Local\hermes\bin\hermes.exe"
 if (Test-Path $HermesExe) {
@@ -188,8 +191,8 @@ Write-Host ""
 Write-Host "Task yang dibuat (SYSTEM - jalan di background saat boot):" -ForegroundColor White
 Write-Host "  1. PJTECH 9router LLM Gateway          → Port 9000" -ForegroundColor Gray
 Write-Host "  2. PJTECH Kasir-Umkm Server            → Port 3000" -ForegroundColor Gray
-Write-Host "  3. PJTECH WhatsApp Business Daemon     → Port 3847" -ForegroundColor Gray
-Write-Host "  4. PJTECH Autonomous Telegram Bot      → Bot Command Center" -ForegroundColor Gray
+Write-Host "  3. PJTECH Autonomous Telegram Bot      → Bot Command Center (include WA daemon)" -ForegroundColor Gray
+Write-Host "  4. PJTECH One-Sales-Man Scheduler      → Divisi Sales (Scrape/Email/Report)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Task USER LOGON (butuh login user):" -ForegroundColor White
 Write-Host "  5. PJTECH Hermes Agent                 → AI Assistant (TUI)" -ForegroundColor Gray
