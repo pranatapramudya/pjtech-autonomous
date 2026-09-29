@@ -34,3 +34,8 @@ telegram-daemon.log
 
 one-sales-man/
 
+# Local machine setup & test scripts
+fix-hermes*.ps1
+create-junction.ps1
+test-yt-upload*.ts
+

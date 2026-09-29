@@ -125,43 +125,23 @@ if (-not $isServerRunning) {
     Write-Host "[OK] Server kasir-umkm sudah aktif di http://localhost:3000!" -ForegroundColor Green
 }
 
-# --- 4. PERIKSA & NYALAKAN WHATSAPP BUSINESS DAEMON (PORT 3847) ---
-$OneSalesDir = "D:\Coding\one-sales-man"
-$waAuthDir = Join-Path $OneSalesDir ".wwebjs_auth"
-$waBackupDir = Join-Path $OneSalesDir ".wwebjs_auth_backup"
+# --- 4. WHATSAPP BUSINESS DAEMON — DINONAKTIFKAN ---
+# ⏸️ DINONAKTIFKAN: Sistem outreach sudah beralih ke Email (via Resend API).
+# WA daemon tidak lagi diperlukan dan hanya membuang CPU/RAM.
+# Untuk mengaktifkan kembali, uncomment blok di bawah ini.
+Write-Host "[--] WhatsApp Business Daemon dinonaktifkan (sistem pakai Email Outreach)." -ForegroundColor DarkGray
 
-# Sesi Guard: Pulihkan jika corrupt / backup jika sehat
-if (Test-Path $waAuthDir) {
-    $authFiles = Get-ChildItem -Path $waAuthDir -Recurse -ErrorAction SilentlyContinue
-    if ($authFiles -and $authFiles.Count -gt 10) {
-        Write-Host "[*] Melakukan Auto-Backup sesi WhatsApp Business aktif..." -ForegroundColor Cyan
-        try {
-            robocopy $waAuthDir $waBackupDir /MIR /R:1 /W:1 /NFL /NDL /NJH /NJS /nc /ns /np | Out-Null
-            Write-Host "[OK] Backup sesi WhatsApp tersimpan aman di .wwebjs_auth_backup." -ForegroundColor Green
-        } catch {
-            Write-Warning "[!] Peringatan: Gagal membuat backup sesi: $_"
-        }
-    }
-} elseif (Test-Path $waBackupDir) {
-    Write-Host "[!] Folder .wwebjs_auth utama tidak ditemukan, memulihkan dari backup otomatis..." -ForegroundColor Yellow
-    try {
-        robocopy $waBackupDir $waAuthDir /MIR /R:1 /W:1 /NFL /NDL /NJH /NJS /nc /ns /np | Out-Null
-        Write-Host "[OK] Sesi WhatsApp Business berhasil dipulihkan dari backup!" -ForegroundColor Green
-    } catch {
-        Write-Warning "[!] Peringatan: Gagal memulihkan sesi dari backup: $_"
-    }
-}
-
-$waOk = Test-NetConnection -ComputerName localhost -Port 3847 -InformationLevel Quiet -WarningAction SilentlyContinue
-if (-not $waOk) {
-    Write-Host "[*] Menyalakan WhatsApp Business Daemon 24/7 di background..." -ForegroundColor Cyan
-    if (Test-Path $OneSalesDir) {
-        Start-Process -FilePath "cmd.exe" -ArgumentList "/c npx tsx src/whatsapp/daemon.ts >> D:\Coding\pjtech-autonomous\whatsapp-daemon.log 2>&1" -WorkingDirectory $OneSalesDir -WindowStyle Hidden
-        Write-Host "[OK] WhatsApp Business Daemon diluncurkan di background." -ForegroundColor Green
-    }
-} else {
-    Write-Host "[OK] WhatsApp Business Daemon sudah aktif di port 3847." -ForegroundColor Green
-}
+# $OneSalesDir = "D:\Coding\one-sales-man"
+# $waOk = Test-NetConnection -ComputerName localhost -Port 3847 -InformationLevel Quiet -WarningAction SilentlyContinue
+# if (-not $waOk) {
+#     Write-Host "[*] Menyalakan WhatsApp Business Daemon 24/7 di background..." -ForegroundColor Cyan
+#     if (Test-Path $OneSalesDir) {
+#         Start-Process -FilePath "cmd.exe" -ArgumentList "/c npx tsx src/whatsapp/daemon.ts >> D:\Coding\pjtech-autonomous\whatsapp-daemon.log 2>&1" -WorkingDirectory $OneSalesDir -WindowStyle Hidden
+#         Write-Host "[OK] WhatsApp Business Daemon diluncurkan di background." -ForegroundColor Green
+#     }
+# } else {
+#     Write-Host "[OK] WhatsApp Business Daemon sudah aktif di port 3847." -ForegroundColor Green
+# }
 
 # --- 5. START CLOUDFLARE TUNNEL (UNTUK URL PUBLIK HTTPS MARKETING) ---
 Write-Host "===========================================================" -ForegroundColor Cyan
