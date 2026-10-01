@@ -11,7 +11,16 @@
     "bot": "npm --prefix video-engine run start:bot",
     "start:bot": "npm --prefix video-engine run start:bot",
     "generate:motion": "npm --prefix video-engine run generate:motion",
-    "generate:e2e": "npm --prefix video-engine run generate:e2e"
+    "generate:e2e": "npm --prefix video-engine run generate:e2e",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -27,5 +36,10 @@
     "node": ">=18.0.0"
   },
   "author": "PJTech",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.9"
+  }
 }
