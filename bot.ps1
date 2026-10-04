@@ -90,18 +90,8 @@ $isServerRunning = $isPortActive -or ($isKasirProcessRunning -and $isKasirProces
 
 if (-not $isServerRunning) {
     if ($KasirDir -and (Test-Path $KasirDir)) {
-        Write-Host "[!] Server kasir-umkm belum aktif. Menyalakan otomatis di background..." -ForegroundColor Yellow
-
-        # Gunakan 'dev' jika .next belum ada, 'start' jika sudah pernah di-build
-        $nextBuildDir = Join-Path $KasirDir ".next"
-        if (Test-Path $nextBuildDir) {
-            # Build sudah ada — jalankan production mode (lebih ringan)
-            Start-Process -FilePath "npm.cmd" -ArgumentList "run", "start" -WorkingDirectory $KasirDir -WindowStyle Hidden
-        } else {
-            # Belum pernah build — jalankan dev mode
-            Write-Host "[*] Belum ada build production. Menjalankan dev mode..." -ForegroundColor Yellow
-            Start-Process -FilePath "npm.cmd" -ArgumentList "run", "dev" -WorkingDirectory $KasirDir -WindowStyle Hidden
-        }
+        Write-Host "[!] Server kasir-umkm belum aktif. Menyalakan development server (live hot-reload)..." -ForegroundColor Yellow
+        Start-Process -FilePath "npm.cmd" -ArgumentList "run", "dev" -WorkingDirectory $KasirDir -WindowStyle Hidden
 
         $maxWait = 60
         $waited = 0
