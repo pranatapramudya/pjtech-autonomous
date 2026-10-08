@@ -110,7 +110,7 @@ function Start-TelegramBot {
             try { Remove-Item $LockFile -Force -ErrorAction SilentlyContinue } catch {}
         }
         Log-Boot "[*] Menyalakan Telegram Bot Command Center & Scheduler..."
-        Start-Process -FilePath "cmd.exe" -ArgumentList "/c npx tsx src/telegram.ts >> `"$DaemonLog`" 2>&1" -WorkingDirectory $EngineDir -WindowStyle Hidden
+        Start-Process -FilePath "cmd.exe" -ArgumentList "/c npx tsx src/services/telegram.ts >> `"$DaemonLog`" 2>&1" -WorkingDirectory $EngineDir -WindowStyle Hidden
     }
 }
 

@@ -161,7 +161,7 @@ Write-Host ""
 
 Set-Location $EngineDir
 try {
-    npx tsx src/telegram.ts
+    npx tsx src/services/telegram.ts
 } finally {
     Set-Location $ScriptDir
 }
