@@ -31,7 +31,7 @@ try {
 Write-Host "[*] Memeriksa instansi bot yang sedang berjalan..." -ForegroundColor Cyan
 $currentPid = $PID
 $runningBots = Get-CimInstance Win32_Process -Filter "Name='node.exe'" -ErrorAction SilentlyContinue | Where-Object {
-    ($_.CommandLine -like "*src/telegram.ts*" -or $_.CommandLine -like "*src\telegram.ts*") -and $_.ProcessId -ne $currentPid
+    ($_.CommandLine -like "*services/telegram.ts*" -or $_.CommandLine -like "*services\telegram.ts*" -or $_.CommandLine -like "*src/telegram.ts*" -or $_.CommandLine -like "*src\telegram.ts*") -and $_.ProcessId -ne $currentPid
 }
 
 if ($runningBots) {

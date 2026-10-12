@@ -1,7 +1,17 @@
-﻿# pjtech-autonomous — AI Agent Context
+# pjtech-autonomous — AI Agent Context
 
 ## Apa ini?
 Ekosistem autonomous 24/7 milik Pranata Pramudya (PJTech). Bukan web app — ini **orchestrator + Telegram Bot Command Center** yang berjalan terus-menerus di background Windows.
+
+## Standar Baku Arsitektur (SOP)
+Project ini (dan ekosistem repo sibling) mengacu pada standar resmi di **[nextjs-fundamental-sop](https://github.com/pranatapramudya/nextjs-fundamental-sop)**:
+1. **Untuk Web Next.js (`kasir-umkm`)**: Ikuti SOP Restoran Padang (Server Component koki, Client Component pelayan, `loading.tsx`, `error.tsx`, Server Actions, Prepared Statements).
+2. **Untuk Backend Bot/Automation (`pjtech-autonomous`, `one-sales-man`)**: Ikuti **Modul 11 (Filosofi Pabrik Robot)**:
+   - **Loop Error Isolation**: Wajib `try-catch` di *dalam* iterasi loop agar error 1 item tidak menghentikan batch.
+   - **Centralized Env & Booting Crash Guard**: Validasi `process.env` terpusat di `src/config/env.ts` pada detik ke-0.
+   - **Separasi 3 Pilar**: Pisahkan folder `config/` (koneksi & env), `services/` (API pihak ketiga mentah), dan `handlers/` (logika bisnis).
+   - **Rate Limiter & Polling Watchdog**: Pasang jeda delay aman & watchdog anti-mati suri (error handler reconnection).
+   - **Zero Logic Modification**: Audit/refactor tidak boleh mengubah alur bisnis atau fitur inti tanpa persetujuan.
 
 ## Arsitektur Sistem
 
