@@ -187,14 +187,15 @@ npm run master scheduler    # 24/7 scheduler mode
 Memproduksi video berstandar agensi periklanan untuk mengonversi prospek di berbagai kanal sosial media:
 
 ### Format Video yang Diproduksi
-* **Format 1: E2E App Demo (Slot Siang 12:00 WIB)**
+* **Format 1: E2E App Demo (Manual On-Demand via Telegram)**
   - Rekaman navigasi nyata aplikasi kasir menggunakan Playwright browser emulator.
   - Tampilan smartphone 3D mengambang (iPhone 14 Pro Max) dengan B-roll terang dan dynamic sound effects (`whoosh.wav`, `ding.wav`, `cash.wav`).
-  - Fokus: *Proof-of-Work* dan pembuktian fitur siap pakai.
-* **Format 2: 2D Motion Story (Slot Malam 18:30 WIB)**
+  - Fokus: *Proof-of-Work* dan pembuktian fitur siap pakai. Tersedia on-demand kapan saja via menu Telegram Bot (`/marketing` atau `/generate`).
+* **Format 2: 2D Motion Story (Jadwal Otonom Harian 18:30 WIB Prime Time — 1x/Hari)**
   - Kartu visual 2D Claymorphic 220px dengan animasi pegas elastis (*spring physics*).
   - Subtitle karaoke dinamis berpresisi tinggi (0 drift) yang diselaraskan dengan TTS Orus.
   - Fokus: *Viral Storytelling* yang mengangkat masalah operasional UMKM (bon hilang, antrean kacau, kasbon selisih).
+  - Diterbitkan otomatis 1x sehari pukul 18:30 WIB (slot siang 12:00 dinonaktifkan).
 
 ### Alur Eksekusi Otomatis
 1. **Remotion Engine** merender video vertikal 9:16 resolusi tinggi (`output_ready.mp4`).
@@ -267,14 +268,13 @@ Sistem autonomous scheduler bekerja setiap hari tanpa henti mengikuti matriks ja
 
 | Jam (WIB) | Divisi | Nama Operasi | Keterangan |
 | :---: | :---: | :--- | :--- |
-| **08:00** | 🖥️ System | **BIOS RTC Auto-Wake & Startup Check** | PC menyala otomatis via BIOS RTC Alarm. Windows auto-logon, `bot.ps1` dijalankan dari folder Startup: kill zombie proses lama → cek koneksi Telegram API → aktifkan bot → notifikasi online. |
-| **08:30** | 💼 Sales | **Auto-Scrape Google Maps** | Mengumpulkan 10 prospek baru sesuai matriks sektor harian (Senin: Retail, Selasa: Kafe, Rabu: Gym/Salon, Kamis: Rental, Jumat: Kuliner, Sabtu: Bengkel). |
-| **12:00** | 🎬 Marketing | **Slot 1: E2E App Demo** | Render video demo aplikasi ➔ Upload YouTube Shorts ➔ Kirim MP4 & copywriting ke Telegram. |
-| **14:00** | 💼 Sales | **Batch Outreach WA (Anti-Ban)** | Menyapa **5 prospek** berstatus `PENDING` dengan pesan *Free Trial 14 Hari* dan jeda acak **30–60 detik** antar pesan untuk menghindari deteksi WhatsApp. |
-| **18:30** | 🎬 Marketing | **Slot 2: 2D Motion Story** | Render video 2D motion explainer ➔ Upload YouTube Shorts ➔ Kirim MP4 & copywriting ke Telegram. |
-| **21:00** | 🧠 Analytics | **AI Analytics Flywheel** | Gemini AI menganalisis performa YouTube harian dan merumuskan *winning hook formula* baru ke knowledge base. |
-| **21:30** | 📋 Executive | **Nightly Executive Briefing** | Bot mengirimkan laporan ringkasan malam ke Telegram (jumlah prospek, status pipeline, dan video yang terbit hari ini). |
-| **21:35** | 🖥️ System | **Safe Auto-Shutdown OS** | Menjalankan `shutdown /s /t 60` untuk mematikan PC dengan aman setelah semua laporan terkirim — siap untuk siklus RTC berikutnya. |
+| **08:30** | 🌍 Sales | **Auto-Scrape Google Maps** | Mengumpulkan 50 prospek baru per hari via Playwright (Wave Expansion nasional). |
+| **09:00** | 📧 Sales | **Cold Email Outreach (Batch 50)** | Mengirim email penawaran dingin via Resend API dengan rate limit aman. |
+| **09:00** | 🔐 System | **Auto-Refresh YouTube Token** | Refresh OAuth2 refresh token otomatis agar upload YouTube tidak pernah expired. |
+| **10:00** | 📧 Sales | **Email Follow-up H+3 & H+7** | Follow-up otomatis ke prospek yang belum merespons email awal. |
+| **18:30** | 🎬 Marketing | **Daily Prime Time: Motion Story** | Render video 2D motion explainer ➔ Upload YouTube Shorts ➔ Kirim MP4 & copywriting ke Telegram (1x/hari). |
+| **21:00** | 🧠 Analytics | **AI Analytics Flywheel** | Gemini AI menganalisis performa YouTube harian dan merumuskan winning hook. |
+| **21:30** | 📋 Executive | **Nightly Executive Briefing** | Bot mengirimkan laporan ringkasan malam ke Telegram. |
 
 ### Windows 24/7 Power Plan, Auto-Start & Auto-Logon
 File script otomatisasi telah tersedia di root proyek: [setup-windows.ps1](setup-windows.ps1) dan [bot.ps1](bot.ps1).

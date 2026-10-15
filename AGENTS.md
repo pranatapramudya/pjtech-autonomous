@@ -38,8 +38,7 @@ bot.ps1                          ← Launcher utama (jalankan ini untuk start se
 - `09:00` — Email Cold Outreach (Resend API, 50 email/hari)
 - `09:00` — Auto-refresh YouTube OAuth token
 - `10:00` — Email Follow-up hari ke-3 & ke-7
-- `12:00` — Produksi video marketing Slot 1 (E2E Demo) → YouTube Shorts
-- `18:30` — Produksi video marketing Slot 2 (Motion Story) → YouTube Shorts
+- `18:30` — Produksi video marketing harian Prime Time (Motion Story) → YouTube Shorts (1x/hari, slot siang 12:00 dinonaktifkan)
 - `21:00` — AI Analytics Flywheel (evaluasi konten)
 - `21:30` — Nightly Executive Report ke Telegram
 
