@@ -423,5 +423,34 @@ Menyelaraskan kategori di `one-sales-man/src/pipeline/cli-outreach.ts` dan `sale
 
 ---
 
+## 🚀 14. Pembaruan Sistem: Blueprint Penjualan, EBU R128 Audio & State-Aware Boot Catch-Up (15 Oktober 2026)
+
+Pembaruan arsitektur besar untuk konversi penjualan, kualitas audio video, dan ketahanan kelistrikan rumah 900VA:
+
+### 1. Direct-Response Sales Pitch Framework (P-A-S-O-C)
+- **Framework 35–45 Detik:** Mengganti naskah generik dengan formula konversi tinggi: *Hook (0-5s)*, *Agitate (5-15s)*, *Solution (15-30s)*, *The Offer (30-40s)*, dan *CTA (40-45s)*.
+- **Price Anchoring Ekstrem:** Membandingkan software kasir lain yang mahal (Rp 3.000.000 – Rp 4.800.000/thn) dengan PJTech Kasir UMKM (**Rp 990.000 / Tahun = Cuma Rp 2.700/hari**, lebih murah dari ongkos parkir motor).
+- **Normalisasi Pelafalan Rupiah:** Seluruh nominal angka rupiah otomatis diubah menjadi teks fonetik bahasa Indonesia yang fasih (*"sembilan ratus sembilan puluh ribu rupiah"*, dll) sehingga suara Orus percaya diri dan natural.
+- **Floating Price Anchoring Card di Remotion:** Di detik ke-30 muncul kartu animasi harga coret merah `~Rp 3.500.000~` yang diganti harga hero neon `Rp 990.000` di posisi atas aman (tanpa menutupi mockup iPhone atau subtitle).
+
+### 2. Audio Loudness & Clarity Mastering (EBU R128 Loudnorm)
+- Mengimplementasikan filter standar penyiaran **EBU R128 Loudnorm** (`loudnorm=I=-13:TP=-1:LRA=7`) pada Remotion FFmpeg.
+- **Gain Boost:** Volume vokal Orus naik dari `-19.1 dB RMS` menjadi **`-14.5 dB RMS` (+4.6 dB gain)**, setara standar video viral TikTok & Shorts.
+- **Anti-Clipping:** True Peak dikunci di batas aman **`-0.84 dBTP`** (di bawah 0 dB), menjamin suara vokal sangat kencang, bertenaga di speaker HP, dan bebas distorsi/pecah.
+
+### 3. State-Aware Boot & Catch-Up Engine (Penyesuaian Daya 900VA)
+- **Aman Kelistrikan 900VA:** Alarm BIOS 08:00 AM dinonaktifkan demi mencegah jeglek akibat *inrush current* (30–50A) kapasitor PSU DeepCool PK500D yang bentrok dengan kompresor kulkas saat listrik PLN baru menyala kembali.
+- **Auto Catch-Up saat Boot:** Kapan pun PC dinyalakan manual oleh user (misal jam 09:30, 10:15 WIB), 15 detik setelah boot sistem otomatis mendeteksi tugas pagi yang terlewat (Scrape 08:30, Token 09:00, Outreach 09:00, Followup 10:00) dan mengeksekusinya secara berurutan.
+- **Idempoten & Anti-Spam:** Status tersimpan di [`sales_schedule_state.json`](file:///d:/Coding/pjtech-autonomous/video-engine/src/data/sales_schedule_state.json) dengan auto-reset harian WIB. PC bisa di-restart berulang kali tanpa risiko duplikasi email atau scraping ganda.
+- **Watchdog Berkala:** Cron recovery berjalan setiap 30 menit (`*/30 9-22 * * *`) untuk memastikan tidak ada slot harian yang tertinggal.
+
+### 4. Human-Friendly Telegram Reporting & Bugfix Sanitasi
+- **Zero Double-Message:** Mengeliminasi notifikasi ganda antara skrip internal `one-sales-man` dan `autonomous-scheduler`.
+- **Laporan Transparan:** Jika target email/follow-up bernilai 0, bot memberikan penjelasan gamblang (misal: antrean follow-up belum jatuh tempo H+3/H+7 atau stok prospek ber-email sedang menunggu jadwal scrape), bukan teks kaku `Terkirim: 0`.
+- **Regex Robustness:** Mengganti parsing `stdout.indexOf('{')` di `sales-orchestrator.ts` dengan regex matcher agar kebal terhadap pesan informatif/tips dotenv v17.
+- **Sanitasi Ekstraksi Email Scraper:** Menambahkan decode `mailto:` URI (`%40` -> `@`), memfilter false-positive domains, dan mencegah link Google Products (`google.co.id/about/products`) terpilih sebagai website UMKM.
+
+---
+
 ## 🛡️ Lisensi & Kepemilikan
 Dikembangkan secara eksklusif untuk **Pranajaya Tech (PJTech Autonomous Solopreneur Ecosystem)**. Hak cipta dilindungi undang-undang.

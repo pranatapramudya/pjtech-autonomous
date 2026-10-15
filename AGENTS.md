@@ -61,7 +61,7 @@ bot.ps1                          ← Launcher utama (jalankan ini untuk start se
 ## Rules Penting untuk Agent
 1. **WA Daemon DINONAKTIFKAN** — sistem beralih ke Email Outreach. Jangan aktifkan kembali `npx tsx src/whatsapp/daemon.ts` di `bot.ps1`
 2. **Single instance** — `bot.ps1` sudah ada single-instance guard. Jangan spawn `telegram.ts` lebih dari sekali
-3. **BIOS alarm 08:00** — PC hidup otomatis jam 08:00. Kalau ada tugas terlewat, gunakan: `cd video-engine && npx tsx src/catchup-today.ts`
+3. **State-Aware Boot & Catch-Up Engine** — PC dinyalakan manual oleh user (alarm BIOS 08:00 dinonaktifkan demi keamanan kelistrikan rumah 900VA anti-jeglek). Sistem otomatis mendeteksi dan mengeksekusi tugas terlewat (Scrape 08:30, Token 09:00, Outreach 09:00, Followup 10:00, Video 18:30) 15 detik setelah boot menyala dan berkala tiap 30 menit via `sales-tracker.ts`. Script manual tetap tersedia di: `cd video-engine && npx tsx src/catchup-today.ts`
 4. **Counter sent/failed** — parse dari baris `Sent: N` / `Failed: N` di SUMMARY output subprocess, bukan dari emoji (emoji garbled di Windows stdout)
 5. **Supervisor di boot.log** — jika Telegram Bot crash, `bot.ps1` restart otomatis via VBS di Startup folder
 
